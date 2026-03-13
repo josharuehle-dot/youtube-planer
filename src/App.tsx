@@ -38,25 +38,12 @@ export default function App() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<ChannelStats | null>(null);
-  const [session, setSession] = useState<any>(null);
-
-  // Initial fetch and session management
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const [isUnlocked, setIsUnlocked] = useState<boolean>(() => {
+    return sessionStorage.getItem('team_unlocked') === 'true';
+  });
 
   useEffect(() => {
-    if (!session) return;
+    if (!isUnlocked) return;
     async function fetchVideos() {
       const { data, error } = await supabase.from('videos').select('*').order('created_at', { ascending: false });
       if (error) {
@@ -148,8 +135,8 @@ export default function App() {
     if (v.status !== 'Published') statusSummary[v.status] = (statusSummary[v.status] ?? 0) + 1;
   });
 
-  if (!session) {
-    return <Auth />;
+  if (!isUnlocked) {
+    return <Auth onUnlock={() => setIsUnlocked(true)} />;
   }
 
   return (
@@ -271,7 +258,10 @@ export default function App() {
           <button
             className="btn btn-secondary"
             style={{ width: '100%', marginTop: 'auto' }}
-            onClick={() => supabase.auth.signOut()}
+            onClick={() => {
+              sessionStorage.removeItem('team_unlocked');
+              setIsUnlocked(false);
+            }}
           >
             Abmelden
           </button>

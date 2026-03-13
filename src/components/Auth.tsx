@@ -1,48 +1,41 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
-import { LogIn, Lock, User } from 'lucide-react';
+import { Lock, Key } from 'lucide-react';
 
-export const Auth: React.FC = () => {
+interface AuthProps {
+  onUnlock: () => void;
+}
+
+export const Auth: React.FC<AuthProps> = ({ onUnlock }) => {
   const [loading, setLoading] = useState(false);
-  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [inviteCode, setInviteCode] = useState('');
-  const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const SECRET_INVITE_CODE = 'Schleini-Youtube.Planer';
-
-  const handleAuth = async (e: React.FormEvent) => {
+  const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    // Internal mapping of username to a unique-looking email format
-    // We add a unique suffix to avoid domain-wide rate limits in Supabase
-    const sanitizedUsername = username.toLowerCase().trim().replace(/\s+/g, '.');
-    const email = `${sanitizedUsername}@user.planner.local`;
-
     try {
-      if (isSignUp) {
-        if (inviteCode !== SECRET_INVITE_CODE) {
-          throw new Error('Ungültiger Einladungscode');
-        }
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-        });
-        if (error) throw error;
-        alert('Account erstellt! Du kannst dich jetzt einloggen.');
-        setIsSignUp(false);
+      // Check password against app_config table
+      const { data, error } = await supabase
+        .from('app_config')
+        .select('value')
+        .eq('key', 'team_password')
+        .single();
+
+      if (error) throw error;
+
+      if (data && data.value === password) {
+        // Correct password
+        sessionStorage.setItem('team_unlocked', 'true');
+        onUnlock();
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) throw error;
+        setError('Ungültiges Passwort');
       }
     } catch (err: any) {
-      setError(err.message || 'Ein Fehler ist aufgetreten');
+      console.error('Auth error:', err);
+      setError('Verbindungsfehler zur Datenbank');
     } finally {
       setLoading(false);
     }
@@ -53,73 +46,41 @@ export const Auth: React.FC = () => {
       <div className="auth-card glass">
         <div className="auth-header">
           <div className="auth-logo">
-            <LogIn size={32} />
+            <Key size={32} />
           </div>
-          <h1>{isSignUp ? 'Account erstellen' : 'Willkommen zurück'}</h1>
+          <h1>Team Zugang</h1>
           <p className="auth-subtitle">
-            {isSignUp ? 'Registriere dich für den YT Planner' : 'Melde dich an, um fortzufahren'}
+            Bitte gib das Team-Passwort ein, um den Planer zu öffnen.
           </p>
         </div>
 
-        <form onSubmit={handleAuth} className="auth-form">
-          <div className="input-group">
-            <label>Benutzername</label>
-            <div className="input-wrapper">
-              <User size={18} className="input-icon" />
-              <input
-                type="text"
-                placeholder="Dein Name"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-
+        <form onSubmit={handleUnlock} className="auth-form">
           <div className="input-group">
             <label>Passwort</label>
             <div className="input-wrapper">
               <Lock size={18} className="input-icon" />
               <input
                 type="password"
-                placeholder="••••••••"
+                placeholder="Team-Passwort"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoFocus
                 required
               />
             </div>
           </div>
 
-          {isSignUp && (
-            <div className="input-group">
-              <label>Einladungscode</label>
-              <div className="input-wrapper">
-                <Lock size={18} className="input-icon" />
-                <input
-                  type="text"
-                  placeholder="Geheim-Code eingeben"
-                  value={inviteCode}
-                  onChange={(e) => setInviteCode(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-          )}
-
           {error && <div className="auth-error">{error}</div>}
 
           <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
-            {loading ? 'Bitte warten...' : isSignUp ? 'Registrieren' : 'Einloggen'}
+            {loading ? 'Prüfe...' : 'Entsperren'}
           </button>
         </form>
 
         <div className="auth-footer">
-          <button 
-            className="btn-text" 
-            onClick={() => setIsSignUp(!isSignUp)}
-          >
-            {isSignUp ? 'Bereits einen Account? Einloggen' : 'Noch keinen Account? Registrieren'}
-          </button>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+            Nur für autorisierte Teammitglieder.
+          </p>
         </div>
       </div>
     </div>
