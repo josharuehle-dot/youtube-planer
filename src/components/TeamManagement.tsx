@@ -179,6 +179,16 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack }) => {
                   <option value="Admin">Admin</option>
                 </select>
               </div>
+              <div className="input-group">
+                <label>Status</label>
+                <select 
+                  value={newMember.status} 
+                  onChange={e => setNewMember({...newMember, status: e.target.value as any})}
+                >
+                  <option value="Eingeladen">Eingeladen</option>
+                  <option value="Aktiv">Aktiv</option>
+                </select>
+              </div>
               <button type="submit" className="btn btn-primary" style={{ marginTop: '24px' }}>
                 Hinzufügen
               </button>
