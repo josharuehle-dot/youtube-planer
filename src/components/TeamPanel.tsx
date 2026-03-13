@@ -16,6 +16,7 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({ onEnterPlanner, onLogout }
             <PlaySquare size={24} />
           </div>
           <span className="logo-text">Team Panel</span>
+          <span className="badge-beta">BETA 2.3</span>
         </div>
         <button className="btn-logout" onClick={onLogout}>
           <LogOut size={18} />
