@@ -227,6 +227,12 @@
   transition: var(--transition);
 }
 
+.stat-card.link-card {
+  text-decoration: none;
+  color: inherit;
+  grid-column: span 2;
+}
+
 .stat-card:hover {
   background: var(--surface-hover);
   border-color: var(--accent-primary);

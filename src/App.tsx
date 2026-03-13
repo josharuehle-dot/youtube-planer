@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { PlaySquare, Plus, Search, Sun, Moon, Menu, X as CloseIcon, Users, Eye, Video as VideoIcon } from 'lucide-react';
+import { PlaySquare, Plus, Search, Sun, Moon, Menu, X as CloseIcon, Users, Eye, Video as VideoIcon, Layout } from 'lucide-react';
 import type { Video, VideoStatus } from './types';
 import { STATUS_COLORS } from './types';
 import { Calendar } from './components/Calendar';
@@ -151,6 +151,18 @@ export default function App() {
           <div className="sidebar-section">
             <h3 className="section-title">Channel Insights</h3>
             <div className="stats-grid">
+              <a 
+                href="https://www.youtube.com/@UEFN-TippsundTricks" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="stat-card link-card"
+              >
+                <Layout size={14} className="stat-icon" />
+                <div className="stat-info">
+                  <span className="stat-value">{stats ? stats.channelName : '---'}</span>
+                  <span className="stat-label">Channel</span>
+                </div>
+              </a>
               <div className="stat-card">
                 <Users size={14} className="stat-icon" />
                 <div className="stat-info">

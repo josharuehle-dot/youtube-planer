@@ -4,6 +4,7 @@ export interface ChannelStats {
   viewCount: string;
   videoCount: string;
   hiddenSubscriberCount: boolean;
+  channelName: string;
 }
 
 // Replace with real values once provided by the user
@@ -17,7 +18,8 @@ export async function fetchYouTubeStats(): Promise<ChannelStats | null> {
       subscriberCount: "1250",
       viewCount: "45000",
       videoCount: "12",
-      hiddenSubscriberCount: false
+      hiddenSubscriberCount: false,
+      channelName: "UEFN Tipps & Tricks"
     };
   }
 
