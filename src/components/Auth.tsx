@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
-import { LogIn, UserPlus, Lock, User } from 'lucide-react';
+import { LogIn, Lock, User } from 'lucide-react';
 
 export const Auth: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -10,7 +10,7 @@ export const Auth: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const SECRET_INVITE_CODE = 'YT-PLANNER-2026';
+  const SECRET_INVITE_CODE = 'Schleini-Youtube.Planer';
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
