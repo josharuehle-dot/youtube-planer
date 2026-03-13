@@ -8,12 +8,12 @@ export interface ChannelStats {
 }
 
 // Replace with real values once provided by the user
-const API_KEY = 'YOUR_API_KEY';
-const CHANNEL_ID = 'YOUR_CHANNEL_ID';
+const API_KEY = 'AIzaSyBAhcpMxsKagDFgaD_VviSvKKc-7B5KpSs';
+const CHANNEL_ID = 'UCJNCArP-lSKDmSDNA6aBqiw';
 
 export async function fetchYouTubeStats(): Promise<ChannelStats | null> {
-  // If no credentials, return null or dummy data for now
-  if (API_KEY === 'YOUR_API_KEY' || CHANNEL_ID === 'YOUR_CHANNEL_ID') {
+  // If no API key provided, return dummy data for now
+  if (API_KEY === 'YOUR_API_KEY') {
     return {
       subscriberCount: "1250",
       viewCount: "45000",
