@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { ArrowLeft, UserPlus, Trash2, Shield, User, Search } from 'lucide-react';
+import { ArrowLeft, UserPlus, Trash2, Shield, User, Search, Loader2 } from 'lucide-react';
+import { supabase } from '../supabaseClient';
 import logo from '../assets/logo.png';
 import './TeamManagement.css';
+
+type Role = 'Admin' | 'Moderator' | 'Editor';
 
 interface Member {
   id: string;
   name: string;
   email: string;
-  role: 'Admin' | 'Moderator' | 'Editor';
+  role: Role;
   status: 'Aktiv' | 'Eingeladen';
 }
 
@@ -16,13 +18,81 @@ interface TeamManagementProps {
 }
 
 export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack }) => {
-  const [members] = useState<Member[]>([
-    { id: '1', name: 'Josh Rühle', email: 'josh@example.com', role: 'Admin', status: 'Aktiv' },
-    { id: '2', name: 'Team Member 1', email: 'member1@example.com', role: 'Editor', status: 'Aktiv' },
-    { id: '3', name: 'Team Member 2', email: 'member2@example.com', role: 'Moderator', status: 'Eingeladen' },
-  ]);
-
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isAdding, setIsAdding] = useState(false);
+  const [newMember, setNewMember] = useState({ name: '', email: '', role: 'Editor' as Role });
+
+  const fetchMembers = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('team_members')
+      .select('*')
+      .order('created_at', { ascending: true });
+    
+    if (error) {
+      console.error('Error fetching members:', error);
+    } else {
+      setMembers(data || []);
+    }
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    fetchMembers();
+
+    const channel = supabase
+      .channel('team_members_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'team_members' }, () => {
+        fetchMembers();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const handleAddMember = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { error } = await supabase
+      .from('team_members')
+      .insert([
+        { 
+          name: newMember.name, 
+          email: newMember.email, 
+          role: newMember.role,
+          status: 'Eingeladen'
+        }
+      ]);
+
+    if (error) {
+      alert('Fehler beim Einladen: ' + error.message);
+    } else {
+      setNewMember({ name: '', email: '', role: 'Editor' });
+      setIsAdding(false);
+    }
+  };
+
+  const handleDeleteMember = async (id: string) => {
+    if (!confirm('Möchtest du dieses Mitglied wirklich entfernen?')) return;
+    const { error } = await supabase
+      .from('team_members')
+      .delete()
+      .eq('id', id);
+
+    if (error) alert('Fehler beim Löschen: ' + error.message);
+  };
+
+  const handleUpdateRole = async (id: string, newRole: Role) => {
+    const { error } = await supabase
+      .from('team_members')
+      .update({ role: newRole })
+      .eq('id', id);
+
+    if (error) alert('Fehler beim Aktualisieren: ' + error.message);
+  };
 
   const filteredMembers = members.filter(m => 
     m.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -61,11 +131,50 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack }) => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <button className="btn btn-primary">
+          <button className="btn btn-primary" onClick={() => setIsAdding(!isAdding)}>
             <UserPlus size={18} />
-            Mitglied einladen
+            {isAdding ? 'Abbrechen' : 'Mitglied einladen'}
           </button>
         </div>
+
+        {isAdding && (
+          <form className="add-member-form glass" onSubmit={handleAddMember}>
+            <div className="input-row">
+              <div className="input-group">
+                <label>Name</label>
+                <input 
+                  type="text" 
+                  value={newMember.name} 
+                  onChange={e => setNewMember({...newMember, name: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="input-group">
+                <label>E-Mail</label>
+                <input 
+                  type="email" 
+                  value={newMember.email} 
+                  onChange={e => setNewMember({...newMember, email: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="input-group">
+                <label>Rolle</label>
+                <select 
+                  value={newMember.role} 
+                  onChange={e => setNewMember({...newMember, role: e.target.value as Role})}
+                >
+                  <option value="Editor">Editor</option>
+                  <option value="Moderator">Moderator</option>
+                  <option value="Admin">Admin</option>
+                </select>
+              </div>
+              <button type="submit" className="btn btn-primary" style={{ marginTop: '24px' }}>
+                Hinzufügen
+              </button>
+            </div>
+          </form>
+        )}
 
         <div className="members-list glass">
           <div className="list-header">
@@ -87,26 +196,33 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack }) => {
                   </div>
                 </div>
                 <div className="col-role">
-                  <span className={`role-badge ${member.role.toLowerCase()}`}>
-                    <Shield size={12} />
-                    {member.role}
-                  </span>
+                  <select 
+                    className={`role-select ${member.role.toLowerCase()}`}
+                    value={member.role}
+                    onChange={(e) => handleUpdateRole(member.id, e.target.value as Role)}
+                  >
+                    <option value="Admin">Admin</option>
+                    <option value="Moderator">Moderator</option>
+                    <option value="Editor">Editor</option>
+                  </select>
                 </div>
                 <div className="col-status">
                   <span className={`status-dot ${member.status.toLowerCase()}`}></span>
                   {member.status}
                 </div>
                 <div className="col-actions">
-                  <button className="btn-icon-sm" title="Bearbeiten">
-                    <User size={14} />
-                  </button>
-                  <button className="btn-icon-sm danger" title="Entfernen">
+                  <button className="btn-icon-sm danger" title="Entfernen" onClick={() => handleDeleteMember(member.id)}>
                     <Trash2 size={14} />
                   </button>
                 </div>
               </div>
             ))}
-            {filteredMembers.length === 0 && (
+            {loading && (
+              <div className="loading-overlay">
+                <Loader2 size={32} className="spinner" />
+              </div>
+            )}
+            {!loading && filteredMembers.length === 0 && (
               <div className="empty-state">Keine Mitglieder gefunden.</div>
             )}
           </div>
@@ -125,9 +241,9 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack }) => {
             <h3>Einladungs-Limits</h3>
             <p>Dein Team kann bis zu 10 Mitglieder haben.</p>
             <div className="progress-bar">
-              <div className="progress" style={{ width: '30%' }}></div>
+              <div className="progress" style={{ width: `${(members.length / 10) * 100}%` }}></div>
             </div>
-            <span>3 von 10 Plätzen belegt</span>
+            <span>{members.length} von 10 Plätzen belegt</span>
           </div>
         </div>
       </div>
