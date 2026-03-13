@@ -6,8 +6,11 @@ export const Auth: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [inviteCode, setInviteCode] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const SECRET_INVITE_CODE = 'YT-PLANNER-2026';
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,6 +22,9 @@ export const Auth: React.FC = () => {
 
     try {
       if (isSignUp) {
+        if (inviteCode !== SECRET_INVITE_CODE) {
+          throw new Error('Ungültiger Einladungscode');
+        }
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -81,6 +87,22 @@ export const Auth: React.FC = () => {
               />
             </div>
           </div>
+
+          {isSignUp && (
+            <div className="input-group">
+              <label>Einladungscode</label>
+              <div className="input-wrapper">
+                <Lock size={18} className="input-icon" />
+                <input
+                  type="text"
+                  placeholder="Geheim-Code eingeben"
+                  value={inviteCode}
+                  onChange={(e) => setInviteCode(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+          )}
 
           {error && <div className="auth-error">{error}</div>}
 
