@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, UserPlus, Trash2, Shield, User, Mail, Search } from 'lucide-react';
+import { ArrowLeft, UserPlus, Trash2, Shield, User, Search } from 'lucide-react';
 import logo from '../assets/logo.png';
 import './TeamManagement.css';
 
