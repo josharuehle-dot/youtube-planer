@@ -6,46 +6,71 @@ import { STATUS_COLORS } from './types';
 import { Calendar } from './components/Calendar';
 import { VideoList } from './components/VideoList';
 import { VideoModal } from './components/VideoModal';
+import { supabase } from './supabaseClient';
 import './App.css';
 
 // --- Sample demo data ---
 const today = new Date();
 const d = (delta: number) => { const dt = new Date(today); dt.setDate(dt.getDate() + delta); return dt; };
 
-const INITIAL_VIDEOS: Video[] = [
-  { id: uuidv4(), title: 'My Studio Setup 2026', description: 'Full tour of my new setup.', status: 'Ready', uploadDate: d(3) },
-  { id: uuidv4(), title: 'Editing Workflow Deep Dive', description: 'How I cut my videos in Premiere Pro.', status: 'Editing', uploadDate: d(7) },
-  { id: uuidv4(), title: 'Gear I Use for YouTube', description: 'Camera, mic, lights list.', status: 'Scripting', uploadDate: d(14) },
-  { id: uuidv4(), title: 'Vlog: Behind the Scenes', description: 'A look at how content gets made.', status: 'Idea', uploadDate: null },
-  { id: uuidv4(), title: 'Top 10 Tips for Creators', description: 'Shortcuts and productivity hacks.', status: 'Idea', uploadDate: null },
-];
+const INITIAL_VIDEOS: Video[] = [];
 
 type ModalState =
   | { mode: 'closed' }
   | { mode: 'new'; date: Date | null }
   | { mode: 'edit'; video: Video };
 
-const STORAGE_KEY = 'yt_planner_videos';
+// Helper to format video data for/from DB
+const formatVideoFromDB = (v: any): Video => ({
+  ...v,
+  uploadDate: v.upload_date ? new Date(v.upload_date) : null
+});
+
+const formatVideoToDB = (v: Video) => ({
+  id: v.id,
+  title: v.title,
+  description: v.description,
+  status: v.status,
+  upload_date: v.uploadDate ? v.uploadDate.toISOString() : null
+});
+
+const STORAGE_KEY = 'yt_planner_videos'; // Keeping for reference or removing if safe
 
 export default function App() {
-  const [videos, setVideos] = useState<Video[]>(() => {
-    const saved = sessionStorage.getItem(STORAGE_KEY);
-    if (!saved) return INITIAL_VIDEOS;
-    try {
-      const parsed = JSON.parse(saved);
-      return parsed.map((v: any) => ({
-        ...v,
-        uploadDate: v.uploadDate ? new Date(v.uploadDate) : null
-      }));
-    } catch (e) {
-      console.error("Failed to load videos from sessionStorage", e);
-      return INITIAL_VIDEOS;
-    }
-  });
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  // Initial fetch
   useEffect(() => {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(videos));
-  }, [videos]);
+    async function fetchVideos() {
+      const { data, error } = await supabase.from('videos').select('*').order('created_at', { ascending: false });
+      if (error) {
+        console.error('Error fetching videos:', error);
+      } else if (data) {
+        setVideos(data.map(formatVideoFromDB));
+      }
+      setLoading(false);
+    }
+    fetchVideos();
+
+    // Set up real-time subscription
+    const channel = supabase
+      .channel('videos_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'videos' }, (payload) => {
+        if (payload.eventType === 'INSERT') {
+          setVideos(prev => [formatVideoFromDB(payload.new), ...prev]);
+        } else if (payload.eventType === 'UPDATE') {
+          setVideos(prev => prev.map(v => v.id === payload.new.id ? formatVideoFromDB(payload.new) : v));
+        } else if (payload.eventType === 'DELETE') {
+          setVideos(prev => prev.filter(v => v.id !== payload.old.id));
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [modalState, setModalState] = useState<ModalState>({ mode: 'closed' });
@@ -65,16 +90,22 @@ export default function App() {
 
   const closeModal = () => setModalState({ mode: 'closed' });
 
-  const handleSave = useCallback((saved: Video) => {
-    setVideos(prev => {
-      const exists = prev.find(v => v.id === saved.id);
-      return exists ? prev.map(v => v.id === saved.id ? saved : v) : [saved, ...prev];
-    });
+  const handleSave = useCallback(async (saved: Video) => {
+    const dbData = formatVideoToDB(saved);
+    const { error } = await supabase.from('videos').upsert(dbData);
+    if (error) {
+      console.error('Error saving video:', error);
+      alert('Failed to save!');
+    }
     closeModal();
   }, []);
 
-  const handleDelete = useCallback((id: string) => {
-    setVideos(prev => prev.filter(v => v.id !== id));
+  const handleDelete = useCallback(async (id: string) => {
+    const { error } = await supabase.from('videos').delete().eq('id', id);
+    if (error) {
+      console.error('Error deleting video:', error);
+      alert('Failed to delete!');
+    }
   }, []);
 
   // Status counts for the header bar
@@ -162,16 +193,20 @@ export default function App() {
             </button>
           </div>
         </header>
-
-        <div className="content-area">
-          <Calendar
-            videos={displayedVideos}
-            currentDate={currentDate}
-            onDateChange={setCurrentDate}
-            onVideoClick={openEditModal}
-            onDayClick={(date) => openNewModal(date)}
-          />
-        </div>
+        
+        {loading ? (
+          <div className="loading-state">Lade Cloud-Daten...</div>
+        ) : (
+          <div className="content-area">
+            <Calendar
+              videos={displayedVideos}
+              currentDate={currentDate}
+              onDateChange={setCurrentDate}
+              onVideoClick={openEditModal}
+              onDayClick={(date) => openNewModal(date)}
+            />
+          </div>
+        )}
       </main>
 
       {/* Modal */}
