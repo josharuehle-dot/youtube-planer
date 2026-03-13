@@ -6,7 +6,8 @@ import { Calendar } from './components/Calendar';
 import { VideoList } from './components/VideoList';
 import { VideoModal } from './components/VideoModal';
 import { supabase } from './supabaseClient';
-import { fetchYouTubeStats, ChannelStats } from './youtubeService';
+import { fetchYouTubeStats } from './youtubeService';
+import type { ChannelStats } from './youtubeService';
 import './App.css';
 
 // --- Sample demo data ---

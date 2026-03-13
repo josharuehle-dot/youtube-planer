@@ -1,4 +1,3 @@
-import { Users, Eye, Video } from 'lucide-react';
 
 export interface ChannelStats {
   subscriberCount: string;
