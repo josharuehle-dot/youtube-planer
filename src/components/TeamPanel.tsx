@@ -1,5 +1,6 @@
 import React from 'react';
-import { Layout, LogOut, ArrowRight, PlaySquare, Settings, Users } from 'lucide-react';
+import { Layout, LogOut, ArrowRight, Settings, Users } from 'lucide-react';
+import logo from '../assets/logo.png';
 import './TeamPanel.css';
 
 interface TeamPanelProps {
@@ -13,7 +14,7 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({ onEnterPlanner, onLogout }
       <div className="team-panel-header">
         <div className="logo-group">
           <div className="logo-icon">
-            <PlaySquare size={24} />
+            <img src={logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <span className="logo-text">Team Panel</span>
           <span className="badge-beta">BETA 2.3</span>

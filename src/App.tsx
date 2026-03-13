@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { PlaySquare, Plus, Search, Sun, Moon, Menu, X as CloseIcon, Users, Eye, Video as VideoIcon, Layout } from 'lucide-react';
+import { Plus, Search, Sun, Moon, Menu, X as CloseIcon, Users, Eye, Video as VideoIcon, Layout } from 'lucide-react';
 import type { Video, VideoStatus } from './types';
 import { STATUS_COLORS } from './types';
 import { Calendar } from './components/Calendar';
@@ -10,6 +10,7 @@ import { fetchYouTubeStats } from './youtubeService';
 import type { ChannelStats } from './youtubeService';
 import { Auth } from './components/Auth';
 import { TeamPanel } from './components/TeamPanel';
+import logo from './assets/logo.png';
 import './App.css';
 
 // --- Sample demo data ---
@@ -177,7 +178,7 @@ export default function App() {
       <aside className={`sidebar ${isSidebarOpen ? 'active' : ''}`}>
         <div className="sidebar-header">
           <div className="logo-icon">
-            <PlaySquare size={18} strokeWidth={2.5} />
+            <img src={logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <span className="logo-text">YT Planner</span>
           <span className="badge-beta">BETA 2.3</span>
