@@ -177,6 +177,16 @@
   gap: 12px;
 }
 
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
 .content-area {
   flex: 1;
   overflow-y: auto;
