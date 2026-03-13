@@ -1,11 +1,12 @@
 import { useState, useCallback, useEffect } from 'react';
-import { PlaySquare, Plus, Search, Sun, Moon, Menu, X as CloseIcon } from 'lucide-react';
+import { PlaySquare, Plus, Search, Sun, Moon, Menu, X as CloseIcon, Users, Eye, Video as VideoIcon } from 'lucide-react';
 import type { Video, VideoStatus } from './types';
 import { STATUS_COLORS } from './types';
 import { Calendar } from './components/Calendar';
 import { VideoList } from './components/VideoList';
 import { VideoModal } from './components/VideoModal';
 import { supabase } from './supabaseClient';
+import { fetchYouTubeStats, ChannelStats } from './youtubeService';
 import './App.css';
 
 // --- Sample demo data ---
@@ -34,6 +35,7 @@ type StatusHoverState = VideoStatus | null;
 export default function App() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<ChannelStats | null>(null);
 
   // Initial fetch
   useEffect(() => {
@@ -47,6 +49,12 @@ export default function App() {
       setLoading(false);
     }
     fetchVideos();
+
+    async function getStats() {
+      const data = await fetchYouTubeStats();
+      setStats(data);
+    }
+    getStats();
 
     // Set up real-time subscription
     const channel = supabase
@@ -138,6 +146,34 @@ export default function App() {
         </div>
 
         <div className="sidebar-content">
+          {/* Stats Section */}
+          <div className="sidebar-section">
+            <h3 className="section-title">Channel Insights</h3>
+            <div className="stats-grid">
+              <div className="stat-card">
+                <Users size={14} className="stat-icon" />
+                <div className="stat-info">
+                  <span className="stat-value">{stats ? Number(stats.subscriberCount).toLocaleString() : '---'}</span>
+                  <span className="stat-label">Subs</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <Eye size={14} className="stat-icon" />
+                <div className="stat-info">
+                  <span className="stat-value">{stats ? Number(stats.viewCount).toLocaleString() : '---'}</span>
+                  <span className="stat-label">Views</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <VideoIcon size={14} className="stat-icon" />
+                <div className="stat-info">
+                  <span className="stat-value">{stats ? stats.videoCount : '---'}</span>
+                  <span className="stat-label">Videos</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <button
             className="btn btn-primary"
             style={{ width: '100%', marginBottom: '24px' }}
