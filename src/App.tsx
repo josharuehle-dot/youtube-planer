@@ -9,6 +9,7 @@ import { supabase } from './supabaseClient';
 import { fetchYouTubeStats } from './youtubeService';
 import type { ChannelStats } from './youtubeService';
 import { Auth } from './components/Auth';
+import { TeamPanel } from './components/TeamPanel';
 import './App.css';
 
 // --- Sample demo data ---
@@ -41,6 +42,20 @@ export default function App() {
   const [isUnlocked, setIsUnlocked] = useState<boolean>(() => {
     return sessionStorage.getItem('team_unlocked') === 'true';
   });
+  const [view, setView] = useState<'login' | 'hub' | 'planner'>(() => {
+    if (sessionStorage.getItem('team_unlocked') !== 'true') return 'login';
+    return (sessionStorage.getItem('current_view') as 'hub' | 'planner') || 'hub';
+  });
+
+  useEffect(() => {
+    sessionStorage.setItem('current_view', view);
+  }, [view]);
+
+  useEffect(() => {
+    if (isUnlocked && view === 'login') {
+      setView('hub');
+    }
+  }, [isUnlocked]);
 
   useEffect(() => {
     if (!isUnlocked) return;
@@ -135,8 +150,25 @@ export default function App() {
     if (v.status !== 'Published') statusSummary[v.status] = (statusSummary[v.status] ?? 0) + 1;
   });
 
-  if (!isUnlocked) {
-    return <Auth onUnlock={() => setIsUnlocked(true)} />;
+  if (view === 'login') {
+    return <Auth onUnlock={() => {
+      setIsUnlocked(true);
+      setView('hub');
+    }} />;
+  }
+
+  if (view === 'hub') {
+    return (
+      <TeamPanel 
+        onEnterPlanner={() => setView('planner')} 
+        onLogout={() => {
+          sessionStorage.removeItem('team_unlocked');
+          sessionStorage.removeItem('current_view');
+          setIsUnlocked(false);
+          setView('login');
+        }}
+      />
+    );
   }
 
   return (
@@ -151,6 +183,16 @@ export default function App() {
           <span className="badge-beta">BETA</span>
           <button className="mobile-close btn-icon" onClick={() => setIsSidebarOpen(false)}>
             <CloseIcon size={18} />
+          </button>
+        </div>
+
+        <div className="sidebar-hub-action" style={{ padding: '0 24px 16px' }}>
+          <button 
+            className="btn btn-secondary" 
+            style={{ width: '100%', gap: '12px' }}
+            onClick={() => setView('hub')}
+          >
+            <Layout size={16} /> Team Hub
           </button>
         </div>
 
@@ -260,7 +302,9 @@ export default function App() {
             style={{ width: '100%', marginTop: 'auto' }}
             onClick={() => {
               sessionStorage.removeItem('team_unlocked');
+              sessionStorage.removeItem('current_view');
               setIsUnlocked(false);
+              setView('login');
             }}
           >
             Abmelden
