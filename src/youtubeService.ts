@@ -25,17 +25,19 @@ export async function fetchYouTubeStats(): Promise<ChannelStats | null> {
 
   try {
     const response = await fetch(
-      `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${CHANNEL_ID}&key=${API_KEY}`
+      `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&id=${CHANNEL_ID}&key=${API_KEY}`
     );
     const data = await response.json();
 
     if (data.items && data.items.length > 0) {
       const stats = data.items[0].statistics;
+      const snippet = data.items[0].snippet;
       return {
         subscriberCount: stats.subscriberCount,
         viewCount: stats.viewCount,
         videoCount: stats.videoCount,
         hiddenSubscriberCount: stats.hiddenSubscriberCount,
+        channelName: snippet.title
       };
     }
     return null;
