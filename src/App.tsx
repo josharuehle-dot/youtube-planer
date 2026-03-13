@@ -8,6 +8,7 @@ import { VideoModal } from './components/VideoModal';
 import { supabase } from './supabaseClient';
 import { fetchYouTubeStats } from './youtubeService';
 import type { ChannelStats } from './youtubeService';
+import { Auth } from './components/Auth';
 import './App.css';
 
 // --- Sample demo data ---
@@ -37,9 +38,25 @@ export default function App() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<ChannelStats | null>(null);
+  const [session, setSession] = useState<any>(null);
 
-  // Initial fetch
+  // Initial fetch and session management
   useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!session) return;
     async function fetchVideos() {
       const { data, error } = await supabase.from('videos').select('*').order('created_at', { ascending: false });
       if (error) {
@@ -130,6 +147,10 @@ export default function App() {
   videos.forEach(v => {
     if (v.status !== 'Published') statusSummary[v.status] = (statusSummary[v.status] ?? 0) + 1;
   });
+
+  if (!session) {
+    return <Auth />;
+  }
 
   return (
     <div className={`app-container ${isSidebarOpen ? 'sidebar-open' : ''}`}>
@@ -247,6 +268,13 @@ export default function App() {
               onEditVideo={openEditModal}
             />
           </div>
+          <button
+            className="btn btn-secondary"
+            style={{ width: '100%', marginTop: 'auto' }}
+            onClick={() => supabase.auth.signOut()}
+          >
+            Abmelden
+          </button>
         </div>
       </aside>
 
