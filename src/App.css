@@ -89,7 +89,7 @@
   border-right: 1px solid var(--surface-border);
   display: flex;
   flex-direction: column;
-  background: rgba(11, 12, 16, 0.6);
+  background: var(--sidebar-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   z-index: 10;
@@ -160,7 +160,7 @@
   justify-content: space-between;
   padding: 0 32px;
   border-bottom: 1px solid var(--surface-border);
-  background: rgba(11, 12, 16, 0.4);
+  background: var(--topbar-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   z-index: 5;
@@ -205,6 +205,11 @@
   width: 220px;
   padding: 16px;
   z-index: 100;
+  background: var(--modal-bg);
+  border: 1px solid var(--surface-border);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
   animation: popup-fade 0.2s ease-out;
   pointer-events: none; /* Allows mouse to stay on row */
 }

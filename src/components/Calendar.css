@@ -4,7 +4,7 @@
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background: rgba(11, 12, 16, 0.6);
+  background: var(--calendar-bg);
 }
 
 .calendar-header {
@@ -42,7 +42,7 @@
   color: var(--text-muted);
   text-transform: uppercase;
   border-bottom: 1px solid var(--surface-border);
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--calendar-grid-bg);
 }
 
 .calendar-day {
@@ -66,8 +66,8 @@
 }
 
 .calendar-day.other-month {
-  background: rgba(0, 0, 0, 0.2);
-  opacity: 0.6;
+  background: var(--calendar-grid-bg);
+  opacity: 0.4;
 }
 
 .calendar-day.today {

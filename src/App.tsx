@@ -101,8 +101,8 @@ export default function App() {
     const dbData = formatVideoToDB(saved);
     const { error } = await supabase.from('videos').upsert(dbData);
     if (error) {
-      console.error('Error saving video:', error);
-      alert('Failed to save!');
+      console.error('Core Save Error:', error.message, error.details, error.hint);
+      alert(`Fehler beim Speichern: ${error.message}\n\nHinweis: Prüfe ob die Tabelle existiert.`);
     }
     closeModal();
   }, []);
