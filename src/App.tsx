@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { PlaySquare, Plus, Search } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import type { Video, VideoStatus } from './types';
@@ -25,8 +25,28 @@ type ModalState =
   | { mode: 'new'; date: Date | null }
   | { mode: 'edit'; video: Video };
 
+const STORAGE_KEY = 'yt_planner_videos';
+
 export default function App() {
-  const [videos, setVideos] = useState<Video[]>(INITIAL_VIDEOS);
+  const [videos, setVideos] = useState<Video[]>(() => {
+    const saved = sessionStorage.getItem(STORAGE_KEY);
+    if (!saved) return INITIAL_VIDEOS;
+    try {
+      const parsed = JSON.parse(saved);
+      return parsed.map((v: any) => ({
+        ...v,
+        uploadDate: v.uploadDate ? new Date(v.uploadDate) : null
+      }));
+    } catch (e) {
+      console.error("Failed to load videos from sessionStorage", e);
+      return INITIAL_VIDEOS;
+    }
+  });
+
+  useEffect(() => {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(videos));
+  }, [videos]);
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const [modalState, setModalState] = useState<ModalState>({ mode: 'closed' });
   const [searchQuery, setSearchQuery] = useState('');
