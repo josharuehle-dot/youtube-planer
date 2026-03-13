@@ -131,6 +131,7 @@ export default function App() {
             <PlaySquare size={18} strokeWidth={2.5} />
           </div>
           <span className="logo-text">YT Planner</span>
+          <span className="badge-beta">BETA</span>
           <button className="mobile-close btn-icon" onClick={() => setIsSidebarOpen(false)}>
             <CloseIcon size={18} />
           </button>
