@@ -186,7 +186,7 @@ export default function App() {
           </button>
         </div>
 
-        <div className="sidebar-hub-action" style={{ padding: '0 24px 16px' }}>
+        <div className="sidebar-hub-action" style={{ padding: '0 24px 16px', marginTop: '12px' }}>
           <button 
             className="btn btn-secondary" 
             style={{ width: '100%', gap: '12px' }}

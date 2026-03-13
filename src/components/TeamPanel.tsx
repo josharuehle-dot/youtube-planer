@@ -69,7 +69,7 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({ onEnterPlanner, onLogout }
       </div>
 
       <div className="team-panel-footer">
-        <p>&copy; 2024 YouTube Planner Team. Alle Rechte vorbehalten.</p>
+        <p>&copy; 2026 YouTube Planner Team. Alle Rechte vorbehalten.</p>
       </div>
     </div>
   );
