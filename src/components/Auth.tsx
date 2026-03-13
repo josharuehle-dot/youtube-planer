@@ -17,8 +17,10 @@ export const Auth: React.FC = () => {
     setLoading(true);
     setError(null);
 
-    // Internal mapping of username to a virtual email
-    const email = `${username.toLowerCase().trim()}@planner.local`;
+    // Internal mapping of username to a valid email format
+    // Replace spaces and special characters to ensure valid email local-part
+    const sanitizedUsername = username.toLowerCase().trim().replace(/\s+/g, '.');
+    const email = `${sanitizedUsername}@youtube-planner.com`;
 
     try {
       if (isSignUp) {
