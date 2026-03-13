@@ -1,4 +1,5 @@
-import { ArrowLeft, UserPlus, Trash2, Shield, User, Search, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, UserPlus, Trash2, Search, Loader2 } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import logo from '../assets/logo.png';
 import './TeamManagement.css';
@@ -33,13 +34,13 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack }) => {
     
     if (error) {
       console.error('Error fetching members:', error);
-    } else {
-      setMembers(data || []);
+    } else if (data) {
+      setMembers(data as Member[]);
     }
     setLoading(false);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchMembers();
 
     const channel = supabase
@@ -94,7 +95,7 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack }) => {
     if (error) alert('Fehler beim Aktualisieren: ' + error.message);
   };
 
-  const filteredMembers = members.filter(m => 
+  const filteredMembers = members.filter((m: Member) => 
     m.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
     m.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -184,7 +185,7 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack }) => {
             <div className="col-actions"></div>
           </div>
           <div className="list-body">
-            {filteredMembers.map(member => (
+            {filteredMembers.map((member: Member) => (
               <div key={member.id} className="member-row">
                 <div className="col-user">
                   <div className="user-avatar">
