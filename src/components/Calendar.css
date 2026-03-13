@@ -116,3 +116,19 @@
   filter: brightness(1.2);
   transform: translateX(2px);
 }
+
+@media (max-width: 600px) {
+  .calendar-day {
+    min-height: 80px;
+    padding: 6px;
+  }
+  
+  .day-number {
+    font-size: 0.8rem;
+  }
+
+  .event-badge {
+    font-size: 0.65rem;
+    padding: 2px 4px;
+  }
+}

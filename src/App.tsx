@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { PlaySquare, Plus, Search, Sun, Moon } from 'lucide-react';
+import { PlaySquare, Plus, Search, Sun, Moon, Menu, X as CloseIcon } from 'lucide-react';
 import type { Video, VideoStatus } from './types';
 import { STATUS_COLORS } from './types';
 import { Calendar } from './components/Calendar';
@@ -72,6 +72,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const [hoveredStatus, setHoveredStatus] = useState<StatusHoverState>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     return (localStorage.getItem('yt_planner_theme') as 'dark' | 'light') || 'dark';
   });
@@ -122,14 +123,17 @@ export default function App() {
   });
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${isSidebarOpen ? 'sidebar-open' : ''}`}>
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${isSidebarOpen ? 'active' : ''}`}>
         <div className="sidebar-header">
           <div className="logo-icon">
             <PlaySquare size={18} strokeWidth={2.5} />
           </div>
           <span className="logo-text">YT Planner</span>
+          <button className="mobile-close btn-icon" onClick={() => setIsSidebarOpen(false)}>
+            <CloseIcon size={18} />
+          </button>
         </div>
 
         <div className="sidebar-content">
@@ -200,6 +204,9 @@ export default function App() {
       <main className="main-content">
         <header className="topbar">
           <div className="topbar-left">
+            <button className="mobile-menu-btn btn-icon" onClick={() => setIsSidebarOpen(true)}>
+              <Menu size={18} />
+            </button>
             <h2 className="topbar-title">Content Calendar</h2>
             <span className="topbar-date">{currentDate.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })}</span>
           </div>
