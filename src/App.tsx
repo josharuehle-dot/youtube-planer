@@ -10,6 +10,7 @@ import { fetchYouTubeStats } from './youtubeService';
 import type { ChannelStats } from './youtubeService';
 import { Auth } from './components/Auth';
 import { TeamPanel } from './components/TeamPanel';
+import { TeamManagement } from './components/TeamManagement';
 import logo from './assets/logo.png';
 import './App.css';
 
@@ -43,9 +44,9 @@ export default function App() {
   const [isUnlocked, setIsUnlocked] = useState<boolean>(() => {
     return sessionStorage.getItem('team_unlocked') === 'true';
   });
-  const [view, setView] = useState<'login' | 'hub' | 'planner'>(() => {
+  const [view, setView] = useState<'login' | 'hub' | 'planner' | 'team_management'>(() => {
     if (sessionStorage.getItem('team_unlocked') !== 'true') return 'login';
-    return (sessionStorage.getItem('current_view') as 'hub' | 'planner') || 'hub';
+    return (sessionStorage.getItem('current_view') as any) || 'hub';
   });
 
   useEffect(() => {
@@ -162,6 +163,7 @@ export default function App() {
     return (
       <TeamPanel 
         onEnterPlanner={() => setView('planner')} 
+        onEnterTeamManagement={() => setView('team_management')}
         onLogout={() => {
           sessionStorage.removeItem('team_unlocked');
           sessionStorage.removeItem('current_view');
@@ -169,6 +171,12 @@ export default function App() {
           setView('login');
         }}
       />
+    );
+  }
+
+  if (view === 'team_management') {
+    return (
+      <TeamManagement onBack={() => setView('hub')} />
     );
   }
 
@@ -181,7 +189,7 @@ export default function App() {
             <img src={logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <span className="logo-text">YT Planner</span>
-          <span className="badge-beta">BETA 2.3</span>
+          <span className="badge-beta">BETA 2.6</span>
           <button className="mobile-close btn-icon" onClick={() => setIsSidebarOpen(false)}>
             <CloseIcon size={18} />
           </button>

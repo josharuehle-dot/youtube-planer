@@ -5,10 +5,11 @@ import './TeamPanel.css';
 
 interface TeamPanelProps {
   onEnterPlanner: () => void;
+  onEnterTeamManagement: () => void;
   onLogout: () => void;
 }
 
-export const TeamPanel: React.FC<TeamPanelProps> = ({ onEnterPlanner, onLogout }) => {
+export const TeamPanel: React.FC<TeamPanelProps> = ({ onEnterPlanner, onEnterTeamManagement, onLogout }) => {
   return (
     <div className="team-panel-container">
       <div className="team-panel-header">
@@ -17,7 +18,7 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({ onEnterPlanner, onLogout }
             <img src={logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <span className="logo-text">Team Panel</span>
-          <span className="badge-beta">BETA 2.3</span>
+          <span className="badge-beta">BETA 2.6</span>
         </div>
         <button className="btn-logout" onClick={onLogout}>
           <LogOut size={18} />
@@ -57,14 +58,17 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({ onEnterPlanner, onLogout }
             </div>
           </div>
 
-          <div className="module-card glass disabled">
+          <div className="module-card glass" onClick={onEnterTeamManagement}>
             <div className="module-icon members-icon">
               <Users size={32} />
             </div>
             <div className="module-info">
               <h3>Team Verwaltung</h3>
               <p>Verwalte Teammitglieder und deren Berechtigungen.</p>
-              <span className="coming-soon">Demnächst</span>
+            </div>
+            <div className="module-action">
+              <span>Öffnen</span>
+              <ArrowRight size={18} />
             </div>
           </div>
         </div>
