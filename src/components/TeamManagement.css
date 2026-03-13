@@ -250,6 +250,25 @@
   to { transform: rotate(360deg); }
 }
 
+.status-select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--surface-border);
+  color: var(--text-primary);
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.status-select:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-primary);
+}
+
+.status-select.aktiv { color: #2ed573; }
+.status-select.eingeladen { color: #ffa502; }
+
 .status-dot {
   display: inline-block;
   width: 8px;

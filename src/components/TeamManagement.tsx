@@ -23,7 +23,7 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack }) => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isAdding, setIsAdding] = useState(false);
-  const [newMember, setNewMember] = useState({ name: '', email: '', role: 'Editor' as Role });
+  const [newMember, setNewMember] = useState({ name: '', email: '', role: 'Editor' as Role, status: 'Eingeladen' as 'Aktiv' | 'Eingeladen' });
 
   const fetchMembers = async () => {
     setLoading(true);
@@ -64,14 +64,14 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack }) => {
           name: newMember.name, 
           email: newMember.email, 
           role: newMember.role,
-          status: 'Eingeladen'
+          status: newMember.status
         }
       ]);
 
     if (error) {
       alert('Fehler beim Einladen: ' + error.message);
     } else {
-      setNewMember({ name: '', email: '', role: 'Editor' });
+      setNewMember({ name: '', email: '', role: 'Editor', status: 'Eingeladen' });
       setIsAdding(false);
     }
   };
@@ -92,7 +92,16 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack }) => {
       .update({ role: newRole })
       .eq('id', id);
 
-    if (error) alert('Fehler beim Aktualisieren: ' + error.message);
+    if (error) alert('Fehler beim Aktualisieren der Rolle: ' + error.message);
+  };
+
+  const handleUpdateStatus = async (id: string, newStatus: 'Aktiv' | 'Eingeladen') => {
+    const { error } = await supabase
+      .from('team_members')
+      .update({ status: newStatus })
+      .eq('id', id);
+
+    if (error) alert('Fehler beim Aktualisieren des Status: ' + error.message);
   };
 
   const filteredMembers = members.filter((m: Member) => 
@@ -208,8 +217,14 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack }) => {
                   </select>
                 </div>
                 <div className="col-status">
-                  <span className={`status-dot ${member.status.toLowerCase()}`}></span>
-                  {member.status}
+                  <select 
+                    className={`status-select ${member.status.toLowerCase()}`}
+                    value={member.status}
+                    onChange={(e) => handleUpdateStatus(member.id, e.target.value as any)}
+                  >
+                    <option value="Aktiv">Aktiv</option>
+                    <option value="Eingeladen">Eingeladen</option>
+                  </select>
                 </div>
                 <div className="col-actions">
                   <button className="btn-icon-sm danger" title="Entfernen" onClick={() => handleDeleteMember(member.id)}>
