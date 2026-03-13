@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { PlaySquare, Plus, Search } from 'lucide-react';
-import { v4 as uuidv4 } from 'uuid';
+import { PlaySquare, Plus, Search, Sun, Moon } from 'lucide-react';
 import type { Video, VideoStatus } from './types';
 import { STATUS_COLORS } from './types';
 import { Calendar } from './components/Calendar';
@@ -10,10 +9,6 @@ import { supabase } from './supabaseClient';
 import './App.css';
 
 // --- Sample demo data ---
-const today = new Date();
-const d = (delta: number) => { const dt = new Date(today); dt.setDate(dt.getDate() + delta); return dt; };
-
-const INITIAL_VIDEOS: Video[] = [];
 
 type ModalState =
   | { mode: 'closed' }
@@ -34,7 +29,7 @@ const formatVideoToDB = (v: Video) => ({
   upload_date: v.uploadDate ? v.uploadDate.toISOString() : null
 });
 
-const STORAGE_KEY = 'yt_planner_videos'; // Keeping for reference or removing if safe
+type StatusHoverState = VideoStatus | null;
 
 export default function App() {
   const [videos, setVideos] = useState<Video[]>([]);
@@ -76,6 +71,18 @@ export default function App() {
   const [modalState, setModalState] = useState<ModalState>({ mode: 'closed' });
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
+  const [hoveredStatus, setHoveredStatus] = useState<StatusHoverState>(null);
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    return (localStorage.getItem('yt_planner_theme') as 'dark' | 'light') || 'dark';
+  });
+
+  // Apply theme to document
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('yt_planner_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
 
   // Filter by search
   const displayedVideos = searchQuery
@@ -140,13 +147,36 @@ export default function App() {
             <h3 className="section-title">Pipeline</h3>
             <div className="pipeline-summary">
               {(Object.entries(statusSummary) as [VideoStatus, number][]).map(([status, count]) => (
-                <div key={status} className="pipeline-row">
+                <div 
+                  key={status} 
+                  className="pipeline-row"
+                  onMouseEnter={() => setHoveredStatus(status)}
+                  onMouseLeave={() => setHoveredStatus(null)}
+                >
                   <span
                     className="pipeline-dot"
                     style={{ backgroundColor: STATUS_COLORS[status] }}
                   />
                   <span className="pipeline-label">{status}</span>
                   <span className="pipeline-count">{count}</span>
+                  
+                  {hoveredStatus === status && (
+                    <div className="pipeline-popup glass-panel">
+                      <h4 className="popup-title">{status} Videos</h4>
+                      <ul className="popup-list">
+                        {videos
+                          .filter(v => v.status === status)
+                          .map(v => (
+                            <li key={v.id} className="popup-item" onClick={() => openEditModal(v)}>
+                              {v.title}
+                            </li>
+                          ))}
+                        {videos.filter(v => v.status === status).length === 0 && (
+                          <li className="popup-empty">No videos yet</li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               ))}
               {Object.keys(statusSummary).length === 0 && (
@@ -175,6 +205,9 @@ export default function App() {
           </div>
 
           <div className="topbar-actions">
+            <button className="btn-icon" title="Toggle Theme" onClick={toggleTheme}>
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
             {showSearch && (
               <input
                 autoFocus
