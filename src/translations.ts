@@ -14,7 +14,8 @@ export const translations = {
       teamHub: "Team Hub",
       searchPlaceholder: "Videos suchen...",
       contentCalendar: "Content Kalender",
-      schedule: "Planen"
+      schedule: "Planen",
+      twitch: "Twitch Insights"
     },
     teamPanel: {
       welcome: "Willkommen zurück, Team! 👋",
@@ -46,6 +47,8 @@ export const translations = {
       youtube: "YouTube Kanal",
       youtubeLink: "Kanal-URL oder @Handle",
       youtubeApiKey: "YouTube API Key (Optional)",
+      twitch: "Twitch Kanal",
+      twitchLink: "Twitch Kanal-URL",
       branding: "Branding",
       uploadLogo: "Logo hochladen",
       removeLogo: "Logo entfernen",
@@ -133,7 +136,8 @@ export const translations = {
       teamHub: "Team Hub",
       searchPlaceholder: "Search videos...",
       contentCalendar: "Content Calendar",
-      schedule: "Schedule"
+      schedule: "Schedule",
+      twitch: "Twitch Insights"
     },
     teamPanel: {
       welcome: "Welcome back, team! 👋",
@@ -165,6 +169,8 @@ export const translations = {
       youtube: "YouTube Channel",
       youtubeLink: "Channel URL or @Handle",
       youtubeApiKey: "YouTube API Key (Optional)",
+      twitch: "Twitch Channel",
+      twitchLink: "Twitch Channel URL",
       branding: "Branding",
       uploadLogo: "Upload Logo",
       removeLogo: "Remove Logo",

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Plus, Search, Sun, Moon, Menu, X as CloseIcon, Users, Eye, Video as VideoIcon, Layout } from 'lucide-react';
+import { Plus, Search, Sun, Moon, Menu, X as CloseIcon, Users, Eye, Video as VideoIcon, Layout, Globe, Activity } from 'lucide-react';
 import type { Video, VideoStatus } from './types';
 import { STATUS_COLORS } from './types';
 import { Calendar } from './components/Calendar';
@@ -55,6 +55,7 @@ export default function App() {
 
   const [ytApiKey, setYtApiKey] = useState<string>(() => localStorage.getItem('yt_planner_api_key') || '');
   const [ytChannelLink, setYtChannelLink] = useState<string>(() => localStorage.getItem('yt_planner_channel_link') || 'https://www.youtube.com/@UEFN-TippsundTricks');
+  const [twitchLink, setTwitchLink] = useState<string>(() => localStorage.getItem('yt_planner_twitch_link') || '');
   const [customLogo, setCustomLogo] = useState<string | null>(() => localStorage.getItem('yt_planner_custom_logo'));
 
   useEffect(() => {
@@ -232,6 +233,8 @@ export default function App() {
         setYtApiKey={setYtApiKey}
         ytChannelLink={ytChannelLink}
         setYtChannelLink={setYtChannelLink}
+        twitchLink={twitchLink}
+        setTwitchLink={setTwitchLink}
         customLogo={customLogo}
         setCustomLogo={setCustomLogo}
       />
@@ -251,7 +254,7 @@ export default function App() {
             />
           </div>
           <span className="logo-text">YT Planner</span>
-          <span className="badge-beta">BETA 4.6</span>
+          <span className="badge-beta">BETA 4.7</span>
           <button className="mobile-close btn-icon" onClick={() => setIsSidebarOpen(false)}>
             <CloseIcon size={18} />
           </button>
@@ -310,6 +313,38 @@ export default function App() {
                 </div>
               </div>
             </div>
+
+            {/* Twitch Section */}
+            {twitchLink && (
+              <div className="sidebar-section" style={{ animation: 'fadeIn 0.5s ease-out' }}>
+                <h3 className="section-title">{t.sidebar.twitch}</h3>
+                <div className="stats-grid">
+                  <a 
+                    href={twitchLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="stat-card link-card twitch-theme"
+                  >
+                    <div className="stat-icon twitch-avatar">
+                      <Globe size={14} />
+                    </div>
+                    <div className="stat-info">
+                      <span className="stat-value" style={{ fontSize: '0.9rem' }}>
+                        {twitchLink.split('/').pop() || "Channel"}
+                      </span>
+                      <span className="stat-label">Twitch</span>
+                    </div>
+                  </a>
+                  <div className="stat-card twitch-theme">
+                    <Activity size={14} className="stat-icon live-pulse" />
+                    <div className="stat-info">
+                      <span className="stat-value" style={{ color: '#eb0400' }}>LIVE</span>
+                      <span className="stat-label">Status</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <button

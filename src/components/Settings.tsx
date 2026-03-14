@@ -16,6 +16,8 @@ interface SettingsProps {
   setYtApiKey: (val: string) => void;
   ytChannelLink: string;
   setYtChannelLink: (val: string) => void;
+  twitchLink: string;
+  setTwitchLink: (val: string) => void;
   customLogo: string | null;
   setCustomLogo: (val: string | null) => void;
 }
@@ -79,6 +81,8 @@ export const Settings: React.FC<SettingsProps> = ({
   setYtApiKey,
   ytChannelLink,
   setYtChannelLink,
+  twitchLink,
+  setTwitchLink,
   customLogo,
   setCustomLogo
 }) => {
@@ -91,6 +95,7 @@ export const Settings: React.FC<SettingsProps> = ({
   
   const [tempApiKey, setTempApiKey] = useState(ytApiKey);
   const [tempChannelLink, setTempChannelLink] = useState(ytChannelLink);
+  const [tempTwitchLink, setTempTwitchLink] = useState(twitchLink);
   const [showSavedMsg, setShowSavedMsg] = useState(false);
 
   const t = translations[lang].settings;
@@ -100,9 +105,11 @@ export const Settings: React.FC<SettingsProps> = ({
     localStorage.setItem('yt_planner_lang', language);
     localStorage.setItem('yt_planner_email_notif', String(emailNotif));
     localStorage.setItem('yt_planner_browser_notif', String(browserNotif));
+    localStorage.setItem('yt_planner_twitch_link', tempTwitchLink);
     
     setYtApiKey(tempApiKey);
     setYtChannelLink(tempChannelLink);
+    setTwitchLink(tempTwitchLink);
     setLang(language);
     
     setShowSavedMsg(true);
@@ -194,6 +201,26 @@ export const Settings: React.FC<SettingsProps> = ({
                 placeholder="AIzaSy..." 
                 value={tempApiKey}
                 onChange={(e) => setTempApiKey(e.target.value)}
+                className="settings-input"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* TWITCH SETTINGS */}
+        <section className="settings-section">
+          <h3><Globe size={18} /> {t.twitch}</h3>
+          <div className="settings-item vertical">
+            <div className="item-info">
+              <span className="item-label">{t.twitchLink}</span>
+            </div>
+            <div className="settings-input-wrapper">
+              <Globe size={16} className="input-icon" style={{ color: '#9146ff' }} />
+              <input 
+                type="text" 
+                placeholder="https://twitch.tv/username" 
+                value={tempTwitchLink}
+                onChange={(e) => setTempTwitchLink(e.target.value)}
                 className="settings-input"
               />
             </div>

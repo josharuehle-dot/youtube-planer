@@ -193,3 +193,40 @@ button {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
 }
+
+/* Twitch Theme */
+.twitch-theme {
+  border-color: rgba(145, 70, 255, 0.3) !important;
+}
+
+.twitch-theme:hover {
+  background: rgba(145, 70, 255, 0.1) !important;
+  border-color: #9146ff !important;
+}
+
+.twitch-avatar {
+  background: #9146ff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+}
+
+.live-pulse {
+  color: #eb0400;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

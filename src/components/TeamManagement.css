@@ -150,7 +150,8 @@
 
 .members-list {
   border-radius: 20px;
-  overflow: hidden;
+  /* overflow: hidden removed to prevent dropdown clipping */
+  position: relative;
 }
 
 .list-header {
@@ -178,6 +179,11 @@
   align-items: center;
   border-bottom: 1px solid var(--surface-border);
   transition: var(--transition);
+  position: relative;
+}
+
+.member-row:nth-last-child(-n+2) {
+  z-index: 10;
 }
 
 .member-row:last-child {
