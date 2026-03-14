@@ -24,6 +24,12 @@ interface SettingsProps {
   setTwitchClientSecret: (val: string) => void;
   customLogo: string | null;
   setCustomLogo: (val: string | null) => void;
+  panelName: string;
+  setPanelName: (val: string) => void;
+  welcomeMessage: string;
+  setWelcomeMessage: (val: string) => void;
+  accentColor: string;
+  setAccentColor: (val: string) => void;
 }
 
 // Custom Premium Select Component
@@ -92,7 +98,13 @@ export const Settings: React.FC<SettingsProps> = ({
   twitchClientSecret,
   setTwitchClientSecret,
   customLogo,
-  setCustomLogo
+  setCustomLogo,
+  panelName,
+  setPanelName,
+  welcomeMessage,
+  setWelcomeMessage,
+  accentColor,
+  setAccentColor
 }) => {
   const [startPage, setStartPage] = useState<'hub' | 'planner'>(() => {
     return (localStorage.getItem('yt_planner_start_page') as 'hub' | 'planner') || 'hub';
@@ -106,6 +118,9 @@ export const Settings: React.FC<SettingsProps> = ({
   const [tempTwitchLink, setTempTwitchLink] = useState(twitchLink);
   const [tempTwitchClientId, setTempTwitchClientId] = useState(twitchClientId);
   const [tempTwitchClientSecret, setTempTwitchClientSecret] = useState(twitchClientSecret);
+  const [tempPanelName, setTempPanelName] = useState(panelName);
+  const [tempWelcomeMessage, setTempWelcomeMessage] = useState(welcomeMessage);
+  const [tempAccentColor, setTempAccentColor] = useState(accentColor);
   const [showSavedMsg, setShowSavedMsg] = useState(false);
 
   const t = translations[lang].settings;
@@ -118,12 +133,18 @@ export const Settings: React.FC<SettingsProps> = ({
     localStorage.setItem('yt_planner_twitch_link', tempTwitchLink);
     localStorage.setItem('yt_planner_twitch_client_id', tempTwitchClientId);
     localStorage.setItem('yt_planner_twitch_client_secret', tempTwitchClientSecret);
+    localStorage.setItem('yt_planner_panel_name', tempPanelName);
+    localStorage.setItem('yt_planner_welcome_msg', tempWelcomeMessage);
+    localStorage.setItem('yt_planner_accent_color', tempAccentColor);
     
     setYtApiKey(tempApiKey);
     setYtChannelLink(tempChannelLink);
     setTwitchLink(tempTwitchLink);
     setTwitchClientId(tempTwitchClientId);
     setTwitchClientSecret(tempTwitchClientSecret);
+    setPanelName(tempPanelName);
+    setWelcomeMessage(tempWelcomeMessage);
+    setAccentColor(tempAccentColor);
     setLang(language);
     
     setShowSavedMsg(true);
@@ -274,6 +295,60 @@ export const Settings: React.FC<SettingsProps> = ({
         {/* BRANDING SETTINGS */}
         <section className="settings-section">
           <h3><Layout size={18} /> {t.branding}</h3>
+          
+          <div className="settings-item vertical">
+            <div className="item-info">
+              <span className="item-label">{t.panelName}</span>
+            </div>
+            <div className="settings-input-wrapper">
+              <Layout size={16} className="input-icon" />
+              <input 
+                type="text" 
+                placeholder="YouTube Planner" 
+                value={tempPanelName}
+                onChange={(e) => setTempPanelName(e.target.value)}
+                className="settings-input"
+              />
+            </div>
+          </div>
+
+          <div className="settings-item vertical">
+            <div className="item-info">
+              <span className="item-label">{t.welcomeMessage}</span>
+            </div>
+            <div className="settings-input-wrapper">
+              <Mail size={16} className="input-icon" />
+              <input 
+                type="text" 
+                placeholder="Willkommen zurück!" 
+                value={tempWelcomeMessage}
+                onChange={(e) => setTempWelcomeMessage(e.target.value)}
+                className="settings-input"
+              />
+            </div>
+          </div>
+
+          <div className="settings-item vertical">
+            <div className="item-info">
+              <span className="item-label">{t.accentColor}</span>
+            </div>
+            <div className="settings-input-wrapper" style={{ display: 'flex', gap: '12px', background: 'transparent', padding: 0 }}>
+              <input 
+                type="color" 
+                value={tempAccentColor}
+                onChange={(e) => setTempAccentColor(e.target.value)}
+                style={{ width: '48px', height: '38px', borderRadius: '8px', border: '1px solid var(--surface-border)', cursor: 'pointer', background: 'var(--surface-color)' }}
+              />
+              <input 
+                type="text" 
+                value={tempAccentColor}
+                onChange={(e) => setTempAccentColor(e.target.value)}
+                className="settings-input"
+                style={{ flex: 1 }}
+              />
+            </div>
+          </div>
+
           <div className="settings-item">
             <div className="item-info">
               <span className="item-label">{t.uploadLogo}</span>

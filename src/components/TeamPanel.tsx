@@ -15,6 +15,8 @@ interface TeamPanelProps {
   customLogo: string | null;
   stats: ChannelStats | null;
   twitchStatus: TwitchStreamInfo | null;
+  panelName: string;
+  welcomeMessage: string;
 }
 
 export const TeamPanel: React.FC<TeamPanelProps> = ({ 
@@ -25,7 +27,9 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({
   lang,
   customLogo,
   stats,
-  twitchStatus
+  twitchStatus,
+  panelName,
+  welcomeMessage
 }) => {
   const t = translations[lang].teamPanel;
 
@@ -40,8 +44,8 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({
               style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: customLogo ? '4px' : '0' }} 
             />
           </div>
-          <span className="logo-text">Team Panel</span>
-          <span className="badge-beta">BETA 4.9</span>
+          <span className="logo-text">{panelName}</span>
+          <span className="badge-beta">BETA 5.0</span>
         </div>
         <button className="btn-logout" onClick={onLogout}>
           <LogOut size={18} />
@@ -51,7 +55,7 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({
 
       <div className="team-panel-content">
         <div className="welcome-section">
-          <h1>{t.welcome}</h1>
+          <h1>{welcomeMessage || t.welcome}</h1>
           <p>{t.subtitle}</p>
         </div>
 

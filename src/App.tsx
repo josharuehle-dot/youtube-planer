@@ -61,6 +61,11 @@ export default function App() {
   const [twitchClientSecret, setTwitchClientSecret] = useState<string>(() => localStorage.getItem('yt_planner_twitch_client_secret') || '');
   const [twitchStatus, setTwitchStatus] = useState<TwitchStreamInfo | null>(null);
   const [customLogo, setCustomLogo] = useState<string | null>(() => localStorage.getItem('yt_planner_custom_logo'));
+  
+  // Personalization
+  const [panelName, setPanelName] = useState<string>(() => localStorage.getItem('yt_planner_panel_name') || 'YT Planner');
+  const [welcomeMessage, setWelcomeMessage] = useState<string>(() => localStorage.getItem('yt_planner_welcome_msg') || '');
+  const [accentColor, setAccentColor] = useState<string>(() => localStorage.getItem('yt_planner_accent_color') || '#00a3ff');
 
   useEffect(() => {
     sessionStorage.setItem('current_view', view);
@@ -72,6 +77,9 @@ export default function App() {
     localStorage.setItem('yt_planner_twitch_link', twitchLink);
     localStorage.setItem('yt_planner_twitch_client_id', twitchClientId);
     localStorage.setItem('yt_planner_twitch_client_secret', twitchClientSecret);
+    localStorage.setItem('yt_planner_panel_name', panelName);
+    localStorage.setItem('yt_planner_welcome_msg', welcomeMessage);
+    localStorage.setItem('yt_planner_accent_color', accentColor);
 
     const updateStats = async () => {
       // Fetch YouTube stats
@@ -177,7 +185,9 @@ export default function App() {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('yt_planner_theme', theme);
-  }, [theme]);
+    document.documentElement.style.setProperty('--accent-primary', accentColor);
+    document.documentElement.style.setProperty('--accent-gradient', `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}dd 100%)`);
+  }, [theme, accentColor]);
 
   const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
 
@@ -243,6 +253,8 @@ export default function App() {
         customLogo={customLogo}
         stats={stats}
         twitchStatus={twitchStatus}
+        panelName={panelName}
+        welcomeMessage={welcomeMessage}
       />
     );
   }
@@ -253,6 +265,7 @@ export default function App() {
         onBack={() => setView('hub')} 
         lang={lang}
         customLogo={customLogo}
+        panelName={panelName}
       />
     );
   }
@@ -277,6 +290,12 @@ export default function App() {
         setTwitchClientSecret={setTwitchClientSecret}
         customLogo={customLogo}
         setCustomLogo={setCustomLogo}
+        panelName={panelName}
+        setPanelName={setPanelName}
+        welcomeMessage={welcomeMessage}
+        setWelcomeMessage={setWelcomeMessage}
+        accentColor={accentColor}
+        setAccentColor={setAccentColor}
       />
     );
   }
@@ -293,8 +312,8 @@ export default function App() {
               style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: customLogo ? '4px' : '0' }} 
             />
           </div>
-          <span className="logo-text">YT Planner</span>
-          <span className="badge-beta">BETA 4.9</span>
+          <span className="logo-text">{panelName}</span>
+          <span className="badge-beta">BETA 5.0</span>
           <button className="mobile-close btn-icon" onClick={() => setIsSidebarOpen(false)}>
             <CloseIcon size={18} />
           </button>

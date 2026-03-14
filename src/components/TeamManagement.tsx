@@ -19,6 +19,7 @@ interface TeamManagementProps {
   onBack: () => void;
   lang: Language;
   customLogo: string | null;
+  panelName: string;
 }
 
 // Reuse CustomSelect concept locally for Team Management
@@ -71,7 +72,10 @@ const CustomSelect: React.FC<{
   );
 };
 
-export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack, lang, customLogo }) => {
+export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack,  lang,
+  customLogo,
+  panelName
+}) => {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -197,8 +201,8 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack, lang, cu
               style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: customLogo ? '4px' : '0' }} 
             />
           </div>
-          <span className="logo-text">Team Panel</span>
-          <span className="badge-beta">BETA 4.9</span>
+          <span className="logo-text">{panelName}</span>
+          <span className="badge-beta">BETA 5.0</span>
         </div>
         <button className="btn-back" onClick={onBack}>
           <ArrowLeft size={18} />
