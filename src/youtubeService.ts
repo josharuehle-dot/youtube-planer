@@ -63,7 +63,7 @@ async function getChannelIdFromHandle(handle: string, apiKey: string): Promise<s
   }
 }
 
-const FALLBACK_API_KEY = 'AIzaSyBAhcpMxsKagDFgaD_VviSvKKc-7B5KpSs';
+const FALLBACK_API_KEY = 'AIzaSyC67yS3rD95pwaxhbYqUd7XSfrLYgFC1kY';
 
 export async function fetchYouTubeStats(apiKey: string | null, channelLinkOrId: string): Promise<ChannelStats | null> {
   const activeKey = apiKey || FALLBACK_API_KEY;
