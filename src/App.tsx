@@ -340,7 +340,7 @@ export default function App() {
             />
           </div>
           <span className="logo-text">{panelName}</span>
-          <span className="badge-beta">BETA 5.1</span>
+          <span className="badge-beta">BETA 5.2</span>
           <button className="mobile-close btn-icon" onClick={() => setIsSidebarOpen(false)}>
             <CloseIcon size={18} />
           </button>
