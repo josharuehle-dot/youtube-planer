@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   ArrowLeft, Save, Bell, Layout, Globe, Moon, Sun, 
-  Youtube, Mail, Smartphone, ChevronDown, Check
+  Youtube, Key, Mail, Smartphone, ChevronDown, Check
 } from 'lucide-react';
 import { translations, type Language } from '../translations';
 import './Settings.css';
@@ -12,8 +12,12 @@ interface SettingsProps {
   toggleTheme: () => void;
   lang: Language;
   setLang: (lang: Language) => void;
+  ytApiKey: string;
+  setYtApiKey: (val: string) => void;
   ytChannelLink: string;
   setYtChannelLink: (val: string) => void;
+  customLogo: string | null;
+  setCustomLogo: (val: string | null) => void;
 }
 
 // Custom Premium Select Component
@@ -71,8 +75,12 @@ export const Settings: React.FC<SettingsProps> = ({
   toggleTheme, 
   lang, 
   setLang,
+  ytApiKey,
+  setYtApiKey,
   ytChannelLink,
-  setYtChannelLink
+  setYtChannelLink,
+  customLogo,
+  setCustomLogo
 }) => {
   const [startPage, setStartPage] = useState<'hub' | 'planner'>(() => {
     return (localStorage.getItem('yt_planner_start_page') as 'hub' | 'planner') || 'hub';
@@ -81,6 +89,7 @@ export const Settings: React.FC<SettingsProps> = ({
   const [emailNotif, setEmailNotif] = useState(() => localStorage.getItem('yt_planner_email_notif') === 'true');
   const [browserNotif, setBrowserNotif] = useState(() => localStorage.getItem('yt_planner_browser_notif') !== 'false');
   
+  const [tempApiKey, setTempApiKey] = useState(ytApiKey);
   const [tempChannelLink, setTempChannelLink] = useState(ytChannelLink);
   const [showSavedMsg, setShowSavedMsg] = useState(false);
 
@@ -92,11 +101,27 @@ export const Settings: React.FC<SettingsProps> = ({
     localStorage.setItem('yt_planner_email_notif', String(emailNotif));
     localStorage.setItem('yt_planner_browser_notif', String(browserNotif));
     
+    setYtApiKey(tempApiKey);
     setYtChannelLink(tempChannelLink);
     setLang(language);
     
     setShowSavedMsg(true);
     setTimeout(() => setShowSavedMsg(false), 2000);
+  };
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setCustomLogo(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveLogo = () => {
+    setCustomLogo(null);
   };
 
   return (
@@ -156,6 +181,43 @@ export const Settings: React.FC<SettingsProps> = ({
                 onChange={(e) => setTempChannelLink(e.target.value)}
                 className="settings-input"
               />
+            </div>
+          </div>
+          <div className="settings-item vertical">
+            <div className="item-info">
+              <span className="item-label">{t.youtubeApiKey}</span>
+            </div>
+            <div className="settings-input-wrapper">
+              <Key size={16} className="input-icon" />
+              <input 
+                type="password" 
+                placeholder="AIzaSy..." 
+                value={tempApiKey}
+                onChange={(e) => setTempApiKey(e.target.value)}
+                className="settings-input"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* BRANDING SETTINGS */}
+        <section className="settings-section">
+          <h3><Layout size={18} /> {t.branding}</h3>
+          <div className="settings-item">
+            <div className="item-info">
+              <span className="item-label">{t.uploadLogo}</span>
+            </div>
+            <div className="logo-upload-area">
+              {customLogo && (
+                <div className="logo-preview-container">
+                  <img src={customLogo} alt="Preview" className="logo-preview" />
+                  <button className="btn-remove-logo" onClick={handleRemoveLogo}>×</button>
+                </div>
+              )}
+              <label className="logo-upload-btn">
+                <span>{customLogo ? t.uploadLogo : t.uploadLogo}</span>
+                <input type="file" accept="image/*" onChange={handleLogoUpload} hidden />
+              </label>
             </div>
           </div>
         </section>

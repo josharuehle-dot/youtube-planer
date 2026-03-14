@@ -53,16 +53,26 @@ export default function App() {
     return savedView || startPage || 'hub';
   });
 
-  const [ytApiKey] = useState<string>(() => localStorage.getItem('yt_planner_api_key') || '');
+  const [ytApiKey, setYtApiKey] = useState<string>(() => localStorage.getItem('yt_planner_api_key') || '');
   const [ytChannelLink, setYtChannelLink] = useState<string>(() => localStorage.getItem('yt_planner_channel_link') || 'https://www.youtube.com/@UEFN-TippsundTricks');
+  const [customLogo, setCustomLogo] = useState<string | null>(() => localStorage.getItem('yt_planner_custom_logo'));
 
   useEffect(() => {
     sessionStorage.setItem('current_view', view);
   }, [view]);
 
   useEffect(() => {
+    localStorage.setItem('yt_planner_api_key', ytApiKey);
     localStorage.setItem('yt_planner_channel_link', ytChannelLink);
-  }, [ytChannelLink]);
+  }, [ytApiKey, ytChannelLink]);
+
+  useEffect(() => {
+    if (customLogo) {
+      localStorage.setItem('yt_planner_custom_logo', customLogo);
+    } else {
+      localStorage.removeItem('yt_planner_custom_logo');
+    }
+  }, [customLogo]);
 
   useEffect(() => {
     if (isUnlocked && view === 'login') {
@@ -213,8 +223,12 @@ export default function App() {
         toggleTheme={toggleTheme} 
         lang={lang}
         setLang={setLang}
+        ytApiKey={ytApiKey}
+        setYtApiKey={setYtApiKey}
         ytChannelLink={ytChannelLink}
         setYtChannelLink={setYtChannelLink}
+        customLogo={customLogo}
+        setCustomLogo={setCustomLogo}
       />
     );
   }
@@ -225,7 +239,11 @@ export default function App() {
       <aside className={`sidebar ${isSidebarOpen ? 'active' : ''}`}>
         <div className="sidebar-header">
           <div className="logo-icon">
-            <img src={logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <img 
+              src={customLogo || logo} 
+              alt="Logo" 
+              style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: customLogo ? '4px' : '0' }} 
+            />
           </div>
           <span className="logo-text">YT Planner</span>
           <span className="badge-beta">BETA 3.4</span>
