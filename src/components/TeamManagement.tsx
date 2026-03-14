@@ -13,6 +13,7 @@ interface Member {
   email: string;
   role: Role;
   status: 'Aktiv' | 'Eingeladen';
+  avatar_url?: string;
 }
 
 interface TeamManagementProps {
@@ -202,7 +203,7 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack,  lang,
             />
           </div>
           <span className="logo-text">{panelName}</span>
-          <span className="badge-beta">BETA 5.3</span>
+          <span className="badge-beta">BETA 5.4</span>
         </div>
         <button className="btn-back" onClick={onBack}>
           <ArrowLeft size={18} />
@@ -327,7 +328,11 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack,  lang,
               <div key={member.id} className="member-row">
                 <div className="col-user">
                   <div className="user-avatar">
-                    {member.name.charAt(0)}
+                    {member.avatar_url ? (
+                      <img src={member.avatar_url} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                    ) : (
+                      member.name.charAt(0)
+                    )}
                   </div>
                   <div className="user-info">
                     <span className="user-name">{member.name}</span>

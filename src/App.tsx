@@ -84,6 +84,20 @@ export default function App() {
       if (session) {
         setIsUnlocked(true);
         if (view === 'login') setView('hub');
+
+        // Discord Profile Sync
+        const user = session.user;
+        const metadata = user.user_metadata;
+        if (metadata && metadata.full_name) {
+          supabase.from('team_members').upsert({
+            email: user.email,
+            name: metadata.full_name,
+            avatar_url: metadata.avatar_url,
+            status: 'Aktiv'
+          }, { onConflict: 'email' }).then(({ error }) => {
+             if (error) console.error('Error syncing profile:', error);
+          });
+        }
       } else if (event === 'SIGNED_OUT') {
         setIsUnlocked(false);
         setView('login');
@@ -340,7 +354,7 @@ export default function App() {
             />
           </div>
           <span className="logo-text">{panelName}</span>
-          <span className="badge-beta">BETA 5.3</span>
+          <span className="badge-beta">BETA 5.4</span>
           <button className="mobile-close btn-icon" onClick={() => setIsSidebarOpen(false)}>
             <CloseIcon size={18} />
           </button>
