@@ -10,6 +10,7 @@ interface TeamPanelProps {
   onEnterSettings: () => void;
   onLogout: () => void;
   lang: Language;
+  customLogo: string | null;
 }
 
 export const TeamPanel: React.FC<TeamPanelProps> = ({ 
@@ -17,7 +18,8 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({
   onEnterTeamManagement, 
   onEnterSettings,
   onLogout,
-  lang
+  lang,
+  customLogo
 }) => {
   const t = translations[lang].teamPanel;
 
@@ -26,7 +28,11 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({
       <div className="team-panel-header">
         <div className="logo-group">
           <div className="logo-icon">
-            <img src={logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <img 
+              src={customLogo || logo} 
+              alt="Logo" 
+              style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: customLogo ? '4px' : '0' }} 
+            />
           </div>
           <span className="logo-text">Team Panel</span>
           <span className="badge-beta">BETA 3.4</span>

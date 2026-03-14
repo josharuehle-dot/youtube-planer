@@ -6,9 +6,10 @@ import { translations, type Language } from '../translations';
 interface AuthProps {
   onUnlock: () => void;
   lang: Language;
+  customLogo: string | null;
 }
 
-export const Auth: React.FC<AuthProps> = ({ onUnlock, lang }) => {
+export const Auth: React.FC<AuthProps> = ({ onUnlock, lang, customLogo }) => {
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +51,12 @@ export const Auth: React.FC<AuthProps> = ({ onUnlock, lang }) => {
       <div className="auth-card glass">
         <div className="auth-header">
           <div className="auth-logo">
-            <Key size={32} />
+            <img 
+              src={customLogo || undefined} 
+              alt="" 
+              style={{ display: customLogo ? 'block' : 'none', width: '100%', height: '100%', objectFit: 'contain' }} 
+            />
+            {!customLogo && <Key size={32} />}
           </div>
           <h1>{t.title}</h1>
           <p className="auth-subtitle">

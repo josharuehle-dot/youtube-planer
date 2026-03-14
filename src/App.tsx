@@ -189,7 +189,7 @@ export default function App() {
     return <Auth onUnlock={() => {
       setIsUnlocked(true);
       setView('hub');
-    }} lang={lang} />;
+    }} lang={lang} customLogo={customLogo} />;
   }
 
   if (view === 'hub') {
@@ -205,6 +205,7 @@ export default function App() {
           setView('login');
         }}
         lang={lang}
+        customLogo={customLogo}
       />
     );
   }
