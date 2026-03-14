@@ -252,7 +252,8 @@ export default function App() {
     closeModal();
   }, []);
 
-  const handleLogout = useCallback(() => {
+  const handleLogout = useCallback(async () => {
+    await supabase.auth.signOut();
     sessionStorage.removeItem('team_unlocked');
     sessionStorage.removeItem('current_view');
     setIsUnlocked(false);
@@ -354,7 +355,7 @@ export default function App() {
             />
           </div>
           <span className="logo-text">{panelName}</span>
-          <span className="badge-beta">BETA 5.4</span>
+          <span className="badge-beta">BETA 5.5</span>
           <button className="mobile-close btn-icon" onClick={() => setIsSidebarOpen(false)}>
             <CloseIcon size={18} />
           </button>
@@ -435,12 +436,7 @@ export default function App() {
           <button
             className="btn btn-secondary"
             style={{ width: '100%', marginTop: 'auto' }}
-            onClick={() => {
-              sessionStorage.removeItem('team_unlocked');
-              sessionStorage.removeItem('current_view');
-              setIsUnlocked(false);
-              setView('login');
-            }}
+            onClick={handleLogout}
           >
             {t.sidebar.logout}
           </button>
