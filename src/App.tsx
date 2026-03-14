@@ -70,33 +70,48 @@ export default function App() {
 
   useEffect(() => {
     sessionStorage.setItem('current_view', view);
-    
-    // Check current session
+  }, [view]);
+
+  // Dedicated Auth & Profile Sync Effect
+  useEffect(() => {
+    const syncProfile = async (session: any) => {
+      if (!session?.user) return;
+      
+      const user = session.user;
+      const metadata = user.user_metadata;
+      const name = metadata?.full_name || metadata?.name || user.email?.split('@')[0] || 'Member';
+      const avatar = metadata?.avatar_url || null;
+
+      try {
+        const { error } = await supabase.from('team_members').upsert({
+          email: user.email,
+          name: name,
+          avatar_url: avatar,
+          status: 'Aktiv'
+        }, { onConflict: 'email' });
+        
+        if (error) console.error('Sync Error:', error);
+      } catch (err) {
+        console.error('Fatal Sync Error:', err);
+      }
+    };
+
+    // Initial check
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         setIsUnlocked(true);
         if (view === 'login') setView('hub');
+        syncProfile(session);
       }
     });
 
-    // Listen for auth changes
+    // Listen for changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
         setIsUnlocked(true);
         if (view === 'login') setView('hub');
-
-        // Discord Profile Sync
-        const user = session.user;
-        const metadata = user.user_metadata;
-        if (metadata && metadata.full_name) {
-          supabase.from('team_members').upsert({
-            email: user.email,
-            name: metadata.full_name,
-            avatar_url: metadata.avatar_url,
-            status: 'Aktiv'
-          }, { onConflict: 'email' }).then(({ error }) => {
-             if (error) console.error('Error syncing profile:', error);
-          });
+        if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+          syncProfile(session);
         }
       } else if (event === 'SIGNED_OUT') {
         setIsUnlocked(false);
@@ -106,7 +121,7 @@ export default function App() {
     });
 
     return () => subscription.unsubscribe();
-  }, [view]);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('yt_planner_api_key', ytApiKey);
@@ -355,7 +370,7 @@ export default function App() {
             />
           </div>
           <span className="logo-text">{panelName}</span>
-          <span className="badge-beta">BETA 5.5</span>
+          <span className="badge-beta">BETA 5.6</span>
           <button className="mobile-close btn-icon" onClick={() => setIsSidebarOpen(false)}>
             <CloseIcon size={18} />
           </button>

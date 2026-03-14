@@ -203,7 +203,7 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack,  lang,
             />
           </div>
           <span className="logo-text">{panelName}</span>
-          <span className="badge-beta">BETA 5.5</span>
+          <span className="badge-beta">BETA 5.6</span>
         </div>
         <button className="btn-back" onClick={onBack}>
           <ArrowLeft size={18} />
