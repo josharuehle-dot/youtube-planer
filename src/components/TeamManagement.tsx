@@ -117,7 +117,7 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack }) => {
             <img src={logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <span className="logo-text">Team Panel</span>
-          <span className="badge-beta">BETA 2.6</span>
+          <span className="badge-beta">BETA 3.4</span>
         </div>
         <button className="btn-back" onClick={onBack}>
           <ArrowLeft size={18} />

@@ -1,15 +1,26 @@
 import React from 'react';
 import { Layout, LogOut, ArrowRight, Settings, Users } from 'lucide-react';
+import { translations, type Language } from '../translations';
 import logo from '../assets/logo.png';
 import './TeamPanel.css';
 
 interface TeamPanelProps {
   onEnterPlanner: () => void;
   onEnterTeamManagement: () => void;
+  onEnterSettings: () => void;
   onLogout: () => void;
+  lang: Language;
 }
 
-export const TeamPanel: React.FC<TeamPanelProps> = ({ onEnterPlanner, onEnterTeamManagement, onLogout }) => {
+export const TeamPanel: React.FC<TeamPanelProps> = ({ 
+  onEnterPlanner, 
+  onEnterTeamManagement, 
+  onEnterSettings,
+  onLogout,
+  lang
+}) => {
+  const t = translations[lang].teamPanel;
+
   return (
     <div className="team-panel-container">
       <div className="team-panel-header">
@@ -18,18 +29,18 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({ onEnterPlanner, onEnterTea
             <img src={logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <span className="logo-text">Team Panel</span>
-          <span className="badge-beta">BETA 2.6</span>
+          <span className="badge-beta">BETA 3.4</span>
         </div>
         <button className="btn-logout" onClick={onLogout}>
           <LogOut size={18} />
-          <span>Abmelden</span>
+          <span>{t.logout}</span>
         </button>
       </div>
 
       <div className="team-panel-content">
         <div className="welcome-section">
-          <h1>Willkommen zurück, Team! 👋</h1>
-          <p>Wähle ein Modul aus, um zu beginnen.</p>
+          <h1>{t.welcome}</h1>
+          <p>{t.subtitle}</p>
         </div>
 
         <div className="modules-grid">
@@ -38,23 +49,26 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({ onEnterPlanner, onEnterTea
               <Layout size={32} />
             </div>
             <div className="module-info">
-              <h3>YouTube Planer</h3>
-              <p>Verwalte deine Video-Uploads, Skripte und Deadlines in einer übersichtlichen Kalenderansicht.</p>
+              <h3>{t.plannerTitle}</h3>
+              <p>{t.plannerDesc}</p>
             </div>
             <div className="module-action">
-              <span>Öffnen</span>
+              <span>{t.open}</span>
               <ArrowRight size={18} />
             </div>
           </div>
 
-          <div className="module-card glass disabled">
+          <div className="module-card glass" onClick={onEnterSettings}>
             <div className="module-icon settings-icon">
               <Settings size={32} />
             </div>
             <div className="module-info">
-              <h3>Einstellungen</h3>
-              <p>Passe Teameinstellungen, Passwörter und Webhook-Benachrichtigungen an.</p>
-              <span className="coming-soon">Demnächst</span>
+              <h3>{t.settingsTitle}</h3>
+              <p>{t.settingsDesc}</p>
+            </div>
+            <div className="module-action">
+              <span>{t.open}</span>
+              <ArrowRight size={18} />
             </div>
           </div>
 
@@ -63,11 +77,11 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({ onEnterPlanner, onEnterTea
               <Users size={32} />
             </div>
             <div className="module-info">
-              <h3>Team Verwaltung</h3>
-              <p>Verwalte Teammitglieder und deren Berechtigungen.</p>
+              <h3>{t.membersTitle}</h3>
+              <p>{t.membersDesc}</p>
             </div>
             <div className="module-action">
-              <span>Öffnen</span>
+              <span>{t.open}</span>
               <ArrowRight size={18} />
             </div>
           </div>
@@ -75,7 +89,7 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({ onEnterPlanner, onEnterTea
       </div>
 
       <div className="team-panel-footer">
-        <p>&copy; 2026 YouTube Planner Team. Alle Rechte vorbehalten.</p>
+        <p>&copy; 2026 YouTube Planner Team. {t.footer}</p>
       </div>
     </div>
   );

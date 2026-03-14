@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Trash2, Calendar, FileText, Tag } from 'lucide-react';
+import { translations, type Language } from '../translations';
 import type { Video, VideoStatus } from '../types';
 import { STATUS_COLORS } from '../types';
 import { v4 as uuidv4 } from 'uuid';
@@ -11,6 +12,7 @@ interface VideoModalProps {
   onSave: (video: Video) => void;
   onDelete?: (id: string) => void;
   onClose: () => void;
+  lang: Language;
 }
 
 const STATUS_OPTIONS: VideoStatus[] = ['Idea', 'Scripting', 'Recording', 'Editing', 'Ready', 'Published'];
@@ -21,11 +23,15 @@ export const VideoModal: React.FC<VideoModalProps> = ({
   onSave,
   onDelete,
   onClose,
+  lang,
 }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<VideoStatus>('Idea');
   const [uploadDate, setUploadDate] = useState('');
+
+  const t = translations[lang].modal;
+  const ts = translations[lang].status;
 
   useEffect(() => {
     if (video) {
@@ -72,7 +78,7 @@ export const VideoModal: React.FC<VideoModalProps> = ({
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-panel glass-panel">
         <header className="modal-header">
-          <h3>{isEditing ? 'Edit Video' : 'New Video Idea'}</h3>
+          <h3>{isEditing ? t.editTitle : t.newTitle}</h3>
           <button className="btn-icon" onClick={onClose}><X size={18} /></button>
         </header>
 
@@ -80,12 +86,12 @@ export const VideoModal: React.FC<VideoModalProps> = ({
           {/* Title */}
           <div className="form-group">
             <label htmlFor="video-title">
-              <FileText size={14} /> Title
+              <FileText size={14} /> {t.titleLabel}
             </label>
             <input
               id="video-title"
               type="text"
-              placeholder="e.g. How I edit my videos..."
+              placeholder={t.titlePlaceholder}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               autoFocus
@@ -96,11 +102,11 @@ export const VideoModal: React.FC<VideoModalProps> = ({
           {/* Description */}
           <div className="form-group">
             <label htmlFor="video-desc">
-              <FileText size={14} /> Description / Notes
+              <FileText size={14} /> {t.descLabel}
             </label>
             <textarea
               id="video-desc"
-              placeholder="Video outline, key points, ideas..."
+              placeholder={t.descPlaceholder}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
@@ -111,7 +117,7 @@ export const VideoModal: React.FC<VideoModalProps> = ({
           {/* Status */}
           <div className="form-group">
             <label>
-              <Tag size={14} /> Status
+              <Tag size={14} /> {t.statusLabel}
             </label>
             <div className="status-options">
               {STATUS_OPTIONS.map((s) => (
@@ -126,7 +132,7 @@ export const VideoModal: React.FC<VideoModalProps> = ({
                   }}
                   onClick={() => setStatus(s)}
                 >
-                  {s}
+                  {ts[s]}
                 </button>
               ))}
             </div>
@@ -135,7 +141,7 @@ export const VideoModal: React.FC<VideoModalProps> = ({
           {/* Upload Date */}
           <div className="form-group">
             <label htmlFor="upload-date">
-              <Calendar size={14} /> Scheduled Upload Date
+              <Calendar size={14} /> {t.dateLabel}
             </label>
             <input
               id="upload-date"
@@ -150,7 +156,7 @@ export const VideoModal: React.FC<VideoModalProps> = ({
                 className="clear-date"
                 onClick={() => setUploadDate('')}
               >
-                Remove date
+                {t.removeDate}
               </button>
             )}
           </div>
@@ -162,15 +168,15 @@ export const VideoModal: React.FC<VideoModalProps> = ({
                 className="btn btn-danger"
                 onClick={() => { onDelete(video.id); onClose(); }}
               >
-                <Trash2 size={16} /> Delete
+                <Trash2 size={16} /> {t.delete}
               </button>
             )}
             <div style={{ flex: 1 }} />
             <button type="button" className="btn btn-secondary" onClick={onClose}>
-              Cancel
+              {t.cancel}
             </button>
             <button type="submit" className="btn btn-primary" disabled={!title.trim()}>
-              {isEditing ? 'Save Changes' : 'Add Video'}
+              {isEditing ? t.saveChanges : t.addVideo}
             </button>
           </div>
         </form>

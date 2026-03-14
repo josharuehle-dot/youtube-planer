@@ -12,6 +12,7 @@ import { Auth } from './components/Auth';
 import { TeamPanel } from './components/TeamPanel';
 import { TeamManagement } from './components/TeamManagement';
 import { Settings } from './components/Settings';
+import { translations, type Language } from './translations';
 import logo from './assets/logo.png';
 import './App.css';
 
@@ -109,6 +110,11 @@ export default function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     return (localStorage.getItem('yt_planner_theme') as 'dark' | 'light') || 'dark';
   });
+  const [lang, setLang] = useState<Language>(() => {
+    return (localStorage.getItem('yt_planner_lang') as Language) || 'de';
+  });
+
+  const t = translations[lang];
 
   // Apply theme to document
   useEffect(() => {
@@ -167,12 +173,14 @@ export default function App() {
       <TeamPanel 
         onEnterPlanner={() => setView('planner')} 
         onEnterTeamManagement={() => setView('team_management')}
+        onEnterSettings={() => setView('settings')}
         onLogout={() => {
           sessionStorage.removeItem('team_unlocked');
           sessionStorage.removeItem('current_view');
           setIsUnlocked(false);
           setView('login');
         }}
+        lang={lang}
       />
     );
   }
@@ -185,7 +193,13 @@ export default function App() {
 
   if (view === 'settings') {
     return (
-      <Settings onBack={() => setView('hub')} theme={theme} toggleTheme={toggleTheme} />
+      <Settings 
+        onBack={() => setView('hub')} 
+        theme={theme} 
+        toggleTheme={toggleTheme} 
+        lang={lang}
+        setLang={setLang}
+      />
     );
   }
 
@@ -210,21 +224,14 @@ export default function App() {
             style={{ width: '100%', gap: '12px' }}
             onClick={() => setView('hub')}
           >
-            <Layout size={16} /> Team Hub
-          </button>
-          <button 
-            className="btn btn-secondary" 
-            style={{ width: '100%', gap: '12px', marginTop: '8px' }}
-            onClick={() => setView('settings')}
-          >
-            <Layout size={16} /> Einstellungen
+            <Layout size={16} /> {t.sidebar.teamHub}
           </button>
         </div>
 
         <div className="sidebar-content">
           {/* Stats Section */}
           <div className="sidebar-section">
-            <h3 className="section-title">Channel Insights</h3>
+            <h3 className="section-title">{t.sidebar.insights}</h3>
             <div className="stats-grid">
               <a 
                 href="https://www.youtube.com/@UEFN-TippsundTricks" 
@@ -242,21 +249,21 @@ export default function App() {
                 <Users size={14} className="stat-icon" />
                 <div className="stat-info">
                   <span className="stat-value">{stats ? Number(stats.subscriberCount).toLocaleString() : '---'}</span>
-                  <span className="stat-label">Subs</span>
+                  <span className="stat-label">{t.sidebar.subs}</span>
                 </div>
               </div>
               <div className="stat-card">
                 <Eye size={14} className="stat-icon" />
                 <div className="stat-info">
                   <span className="stat-value">{stats ? Number(stats.viewCount).toLocaleString() : '---'}</span>
-                  <span className="stat-label">Views</span>
+                  <span className="stat-label">{t.sidebar.views}</span>
                 </div>
               </div>
               <div className="stat-card">
                 <VideoIcon size={14} className="stat-icon" />
                 <div className="stat-info">
                   <span className="stat-value">{stats ? stats.videoCount : '---'}</span>
-                  <span className="stat-label">Videos</span>
+                  <span className="stat-label">{t.sidebar.videos}</span>
                 </div>
               </div>
             </div>
@@ -268,12 +275,12 @@ export default function App() {
             onClick={() => openNewModal()}
             id="add-video-btn"
           >
-            <Plus size={18} /> New Video
+            <Plus size={18} /> {t.sidebar.newVideo}
           </button>
 
           {/* Status summary */}
           <div className="sidebar-section">
-            <h3 className="section-title">Pipeline</h3>
+            <h3 className="section-title">{t.sidebar.pipeline}</h3>
             <div className="pipeline-summary">
               {(Object.entries(statusSummary) as [VideoStatus, number][]).map(([status, count]) => (
                 <div 
@@ -316,10 +323,11 @@ export default function App() {
 
           {/* Unscheduled videos */}
           <div className="sidebar-section">
-            <h3 className="section-title">Unscheduled</h3>
+            <h3 className="section-title">{t.sidebar.unscheduled}</h3>
             <VideoList
               videos={displayedVideos}
               onEditVideo={openEditModal}
+              lang={lang}
             />
           </div>
           <button
@@ -332,7 +340,7 @@ export default function App() {
               setView('login');
             }}
           >
-            Abmelden
+            {t.sidebar.logout}
           </button>
         </div>
       </aside>
@@ -344,8 +352,8 @@ export default function App() {
             <button className="mobile-menu-btn btn-icon" onClick={() => setIsSidebarOpen(true)}>
               <Menu size={18} />
             </button>
-            <h2 className="topbar-title">Content Calendar</h2>
-            <span className="topbar-date">{currentDate.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })}</span>
+            <h2 className="topbar-title">{t.sidebar.contentCalendar}</h2>
+            <span className="topbar-date">{currentDate.toLocaleDateString(lang === 'de' ? 'de-DE' : 'en-US', { month: 'long', year: 'numeric' })}</span>
           </div>
 
           <div className="topbar-actions">
@@ -356,7 +364,7 @@ export default function App() {
               <input
                 autoFocus
                 className="search-input"
-                placeholder="Search videos..."
+                placeholder={t.sidebar.searchPlaceholder}
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 onBlur={() => { if (!searchQuery) setShowSearch(false); }}
@@ -366,7 +374,7 @@ export default function App() {
               <Search size={18} />
             </button>
             <button className="btn btn-primary" onClick={() => openNewModal()} id="add-video-topbar-btn">
-              <Plus size={16} /> Schedule
+              <Plus size={16} /> {t.sidebar.schedule}
             </button>
           </div>
         </header>
@@ -381,6 +389,7 @@ export default function App() {
               onDateChange={setCurrentDate}
               onVideoClick={openEditModal}
               onDayClick={(date) => openNewModal(date)}
+              lang={lang}
             />
           </div>
         )}
@@ -394,6 +403,7 @@ export default function App() {
           onSave={handleSave}
           onDelete={handleDelete}
           onClose={closeModal}
+          lang={lang}
         />
       )}
     </div>

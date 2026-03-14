@@ -1,21 +1,25 @@
 import React from 'react';
 import type { Video } from '../types';
 import { STATUS_COLORS } from '../types';
+import { translations, type Language } from '../translations';
 import { GripVertical } from 'lucide-react';
 import './VideoList.css';
 
 interface VideoListProps {
   videos: Video[];
   onEditVideo: (video: Video) => void;
+  lang: Language;
 }
 
-export const VideoList: React.FC<VideoListProps> = ({ videos, onEditVideo }) => {
+export const VideoList: React.FC<VideoListProps> = ({ videos, onEditVideo, lang }) => {
   const unscheduledVideos = videos.filter(v => !v.uploadDate);
+  const t = translations[lang].videoList;
+  const ts = translations[lang].status;
 
   if (unscheduledVideos.length === 0) {
     return (
       <div className="empty-state">
-        <p>No unscheduled ideas.</p>
+        <p>{t.empty}</p>
       </div>
     );
   }
@@ -34,7 +38,7 @@ export const VideoList: React.FC<VideoListProps> = ({ videos, onEditVideo }) => 
                 className="status-badge" 
                 style={{ backgroundColor: `${STATUS_COLORS[video.status]}20`, color: STATUS_COLORS[video.status], border: `1px solid ${STATUS_COLORS[video.status]}40` }}
               >
-                {video.status}
+                {ts[video.status]}
               </span>
             </div>
           </div>

@@ -11,9 +11,11 @@ import {
   startOfWeek,
   endOfWeek
 } from 'date-fns';
+import { de, enUS } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Video } from '../types';
 import { STATUS_COLORS } from '../types';
+import { type Language } from '../translations';
 import './Calendar.css';
 
 interface CalendarProps {
@@ -22,6 +24,7 @@ interface CalendarProps {
   onDateChange: (date: Date) => void;
   onVideoClick: (video: Video) => void;
   onDayClick: (date: Date) => void;
+  lang: Language;
 }
 
 export const Calendar: React.FC<CalendarProps> = ({ 
@@ -29,8 +32,10 @@ export const Calendar: React.FC<CalendarProps> = ({
   currentDate, 
   onDateChange,
   onVideoClick,
-  onDayClick
+  onDayClick,
+  lang
 }) => {
+  const locale = lang === 'de' ? de : enUS;
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
   const startDate = startOfWeek(monthStart, { weekStartsOn: 1 }); // Monday start
@@ -42,12 +47,14 @@ export const Calendar: React.FC<CalendarProps> = ({
   const nextMonth = () => onDateChange(addMonths(currentDate, 1));
 
   // Weekday headers
-  const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const weekDays = lang === 'de' 
+    ? ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
+    : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   return (
     <div className="calendar-container glass-panel">
       <div className="calendar-header">
-        <h3 className="calendar-title">{format(currentDate, 'MMMM yyyy')}</h3>
+        <h3 className="calendar-title">{format(currentDate, 'MMMM yyyy', { locale })}</h3>
         <div className="calendar-nav">
           <button className="btn-icon" onClick={prevMonth}><ChevronLeft size={18} /></button>
           <button className="btn-icon" onClick={nextMonth}><ChevronRight size={18} /></button>
