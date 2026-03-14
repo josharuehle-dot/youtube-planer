@@ -17,6 +17,7 @@ interface TeamPanelProps {
   twitchStatus: TwitchStreamInfo | null;
   panelName: string;
   welcomeMessage: string;
+  welcomeSubmessage: string;
 }
 
 export const TeamPanel: React.FC<TeamPanelProps> = ({ 
@@ -29,7 +30,8 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({
   stats,
   twitchStatus,
   panelName,
-  welcomeMessage
+  welcomeMessage,
+  welcomeSubmessage
 }) => {
   const t = translations[lang].teamPanel;
 
@@ -45,7 +47,7 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({
             />
           </div>
           <span className="logo-text">{panelName}</span>
-          <span className="badge-beta">BETA 5.0</span>
+          <span className="badge-beta">BETA 5.1</span>
         </div>
         <button className="btn-logout" onClick={onLogout}>
           <LogOut size={18} />
@@ -56,7 +58,7 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({
       <div className="team-panel-content">
         <div className="welcome-section">
           <h1>{welcomeMessage || t.welcome}</h1>
-          <p>{t.subtitle}</p>
+          <p>{welcomeSubmessage || t.subtitle}</p>
         </div>
 
         {/* Stats Section in Hub */}

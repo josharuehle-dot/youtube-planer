@@ -28,6 +28,8 @@ interface SettingsProps {
   setPanelName: (val: string) => void;
   welcomeMessage: string;
   setWelcomeMessage: (val: string) => void;
+  welcomeSubmessage: string;
+  setWelcomeSubmessage: (val: string) => void;
   accentColor: string;
   setAccentColor: (val: string) => void;
 }
@@ -103,6 +105,8 @@ export const Settings: React.FC<SettingsProps> = ({
   setPanelName,
   welcomeMessage,
   setWelcomeMessage,
+  welcomeSubmessage,
+  setWelcomeSubmessage,
   accentColor,
   setAccentColor
 }) => {
@@ -120,6 +124,7 @@ export const Settings: React.FC<SettingsProps> = ({
   const [tempTwitchClientSecret, setTempTwitchClientSecret] = useState(twitchClientSecret);
   const [tempPanelName, setTempPanelName] = useState(panelName);
   const [tempWelcomeMessage, setTempWelcomeMessage] = useState(welcomeMessage);
+  const [tempWelcomeSubmessage, setTempWelcomeSubmessage] = useState(welcomeSubmessage);
   const [tempAccentColor, setTempAccentColor] = useState(accentColor);
   const [showSavedMsg, setShowSavedMsg] = useState(false);
 
@@ -135,6 +140,7 @@ export const Settings: React.FC<SettingsProps> = ({
     localStorage.setItem('yt_planner_twitch_client_secret', tempTwitchClientSecret);
     localStorage.setItem('yt_planner_panel_name', tempPanelName);
     localStorage.setItem('yt_planner_welcome_msg', tempWelcomeMessage);
+    localStorage.setItem('yt_planner_welcome_submsg', tempWelcomeSubmessage);
     localStorage.setItem('yt_planner_accent_color', tempAccentColor);
     
     setYtApiKey(tempApiKey);
@@ -144,6 +150,7 @@ export const Settings: React.FC<SettingsProps> = ({
     setTwitchClientSecret(tempTwitchClientSecret);
     setPanelName(tempPanelName);
     setWelcomeMessage(tempWelcomeMessage);
+    setWelcomeSubmessage(tempWelcomeSubmessage);
     setAccentColor(tempAccentColor);
     setLang(language);
     
@@ -323,6 +330,22 @@ export const Settings: React.FC<SettingsProps> = ({
                 placeholder="Willkommen zurück!" 
                 value={tempWelcomeMessage}
                 onChange={(e) => setTempWelcomeMessage(e.target.value)}
+                className="settings-input"
+              />
+            </div>
+          </div>
+
+          <div className="settings-item vertical">
+            <div className="item-info">
+              <span className="item-label">{t.welcomeSubmessage}</span>
+            </div>
+            <div className="settings-input-wrapper">
+              <Mail size={16} className="input-icon" />
+              <input 
+                type="text" 
+                placeholder="Verwaltet euren Kanal..." 
+                value={tempWelcomeSubmessage}
+                onChange={(e) => setTempWelcomeSubmessage(e.target.value)}
                 className="settings-input"
               />
             </div>

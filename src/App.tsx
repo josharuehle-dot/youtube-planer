@@ -65,6 +65,7 @@ export default function App() {
   // Personalization
   const [panelName, setPanelName] = useState<string>(() => localStorage.getItem('yt_planner_panel_name') || 'YT Planner');
   const [welcomeMessage, setWelcomeMessage] = useState<string>(() => localStorage.getItem('yt_planner_welcome_msg') || '');
+  const [welcomeSubmessage, setWelcomeSubmessage] = useState<string>(() => localStorage.getItem('yt_planner_welcome_submsg') || '');
   const [accentColor, setAccentColor] = useState<string>(() => localStorage.getItem('yt_planner_accent_color') || '#00a3ff');
 
   useEffect(() => {
@@ -79,6 +80,7 @@ export default function App() {
     localStorage.setItem('yt_planner_twitch_client_secret', twitchClientSecret);
     localStorage.setItem('yt_planner_panel_name', panelName);
     localStorage.setItem('yt_planner_welcome_msg', welcomeMessage);
+    localStorage.setItem('yt_planner_welcome_submsg', welcomeSubmessage);
     localStorage.setItem('yt_planner_accent_color', accentColor);
 
     const updateStats = async () => {
@@ -255,6 +257,7 @@ export default function App() {
         twitchStatus={twitchStatus}
         panelName={panelName}
         welcomeMessage={welcomeMessage}
+        welcomeSubmessage={welcomeSubmessage}
       />
     );
   }
@@ -294,6 +297,8 @@ export default function App() {
         setPanelName={setPanelName}
         welcomeMessage={welcomeMessage}
         setWelcomeMessage={setWelcomeMessage}
+        welcomeSubmessage={welcomeSubmessage}
+        setWelcomeSubmessage={setWelcomeSubmessage}
         accentColor={accentColor}
         setAccentColor={setAccentColor}
       />
@@ -313,7 +318,7 @@ export default function App() {
             />
           </div>
           <span className="logo-text">{panelName}</span>
-          <span className="badge-beta">BETA 5.0</span>
+          <span className="badge-beta">BETA 5.1</span>
           <button className="mobile-close btn-icon" onClick={() => setIsSidebarOpen(false)}>
             <CloseIcon size={18} />
           </button>
