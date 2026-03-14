@@ -53,9 +53,17 @@ export default function App() {
     return savedView || startPage || 'hub';
   });
 
+  const [ytApiKey, setYtApiKey] = useState<string>(() => localStorage.getItem('yt_planner_api_key') || '');
+  const [ytChannelLink, setYtChannelLink] = useState<string>(() => localStorage.getItem('yt_planner_channel_link') || '');
+
   useEffect(() => {
     sessionStorage.setItem('current_view', view);
   }, [view]);
+
+  useEffect(() => {
+    localStorage.setItem('yt_planner_api_key', ytApiKey);
+    localStorage.setItem('yt_planner_channel_link', ytChannelLink);
+  }, [ytApiKey, ytChannelLink]);
 
   useEffect(() => {
     if (isUnlocked && view === 'login') {
@@ -77,7 +85,8 @@ export default function App() {
     fetchVideos();
 
     async function getStats() {
-      const data = await fetchYouTubeStats();
+      if (!ytApiKey || !ytChannelLink) return;
+      const data = await fetchYouTubeStats(ytApiKey, ytChannelLink);
       setStats(data);
     }
     getStats();
@@ -165,7 +174,7 @@ export default function App() {
     return <Auth onUnlock={() => {
       setIsUnlocked(true);
       setView('hub');
-    }} />;
+    }} lang={lang} />;
   }
 
   if (view === 'hub') {
@@ -199,6 +208,10 @@ export default function App() {
         toggleTheme={toggleTheme} 
         lang={lang}
         setLang={setLang}
+        ytApiKey={ytApiKey}
+        setYtApiKey={setYtApiKey}
+        ytChannelLink={ytChannelLink}
+        setYtChannelLink={setYtChannelLink}
       />
     );
   }
@@ -234,15 +247,19 @@ export default function App() {
             <h3 className="section-title">{t.sidebar.insights}</h3>
             <div className="stats-grid">
               <a 
-                href="https://www.youtube.com/@UEFN-TippsundTricks" 
+                href={ytChannelLink || "https://www.youtube.com"} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="stat-card link-card"
               >
-                <Layout size={14} className="stat-icon" />
+                {stats?.avatarUrl ? (
+                  <img src={stats.avatarUrl} alt="Avatar" className="stat-icon channel-avatar" style={{ borderRadius: '50%' }} />
+                ) : (
+                  <Layout size={14} className="stat-icon" />
+                )}
                 <div className="stat-info">
-                  <span className="stat-value">{stats ? stats.channelName : '---'}</span>
-                  <span className="stat-label">Channel</span>
+                  <span className="stat-value" style={{ fontSize: '0.9rem' }}>{stats?.channelName || "Channel"}</span>
+                  <span className="stat-label">YouTube</span>
                 </div>
               </a>
               <div className="stat-card">

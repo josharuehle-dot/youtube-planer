@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { Lock, Key } from 'lucide-react';
+import { translations, type Language } from '../translations';
 
 interface AuthProps {
   onUnlock: () => void;
+  lang: Language;
 }
 
-export const Auth: React.FC<AuthProps> = ({ onUnlock }) => {
+export const Auth: React.FC<AuthProps> = ({ onUnlock, lang }) => {
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  const t = translations[lang].auth;
 
   const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,11 +35,11 @@ export const Auth: React.FC<AuthProps> = ({ onUnlock }) => {
         sessionStorage.setItem('team_unlocked', 'true');
         onUnlock();
       } else {
-        setError('Ungültiges Passwort');
+        setError(t.errorInvalid);
       }
     } catch (err: any) {
       console.error('Auth error:', err);
-      setError('Verbindungsfehler zur Datenbank');
+      setError(t.errorDB);
     } finally {
       setLoading(false);
     }
@@ -48,20 +52,20 @@ export const Auth: React.FC<AuthProps> = ({ onUnlock }) => {
           <div className="auth-logo">
             <Key size={32} />
           </div>
-          <h1>Team Zugang</h1>
+          <h1>{t.title}</h1>
           <p className="auth-subtitle">
-            Bitte gib das Team-Passwort ein, um den Planer zu öffnen.
+            {t.subtitle}
           </p>
         </div>
 
         <form onSubmit={handleUnlock} className="auth-form">
           <div className="input-group">
-            <label>Passwort</label>
+            <label>{t.passwordLabel}</label>
             <div className="input-wrapper">
               <Lock size={18} className="input-icon" />
               <input
                 type="password"
-                placeholder="Team-Passwort"
+                placeholder={t.passwordPlaceholder}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoFocus
@@ -73,13 +77,13 @@ export const Auth: React.FC<AuthProps> = ({ onUnlock }) => {
           {error && <div className="auth-error">{error}</div>}
 
           <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
-            {loading ? 'Prüfe...' : 'Entsperren'}
+            {loading ? t.loading : t.unlock}
           </button>
         </form>
 
         <div className="auth-footer">
           <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-            Nur für autorisierte Teammitglieder.
+            {t.footer}
           </p>
         </div>
       </div>

@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { ArrowLeft, Save, Bell, Layout, Globe, Moon, Sun } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { 
+  ArrowLeft, Save, Bell, Layout, Globe, Moon, Sun, 
+  Youtube, Key, Mail, Smartphone, ChevronDown, Check
+} from 'lucide-react';
 import { translations, type Language } from '../translations';
 import './Settings.css';
 
@@ -9,22 +12,81 @@ interface SettingsProps {
   toggleTheme: () => void;
   lang: Language;
   setLang: (lang: Language) => void;
+  ytApiKey: string;
+  setYtApiKey: (val: string) => void;
+  ytChannelLink: string;
+  setYtChannelLink: (val: string) => void;
 }
+
+// Custom Premium Select Component
+const CustomSelect: React.FC<{
+  label: string; // Used for identifying the component (optional)
+  value: string;
+  options: { label: string; value: string }[];
+  onChange: (val: string) => void;
+}> = ({ label: _label, value, options, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedOption = options.find(opt => opt.value === value);
+
+  return (
+    <div className="custom-select-container" ref={containerRef}>
+      <div className="custom-select-trigger" onClick={() => setIsOpen(!isOpen)}>
+        <span>{selectedOption?.label}</span>
+        <ChevronDown size={16} className={`chevron ${isOpen ? 'open' : ''}`} />
+      </div>
+      {isOpen && (
+        <div className="custom-select-options">
+          {options.map((opt) => (
+            <div 
+              key={opt.value} 
+              className={`custom-option ${opt.value === value ? 'selected' : ''}`}
+              onClick={() => {
+                onChange(opt.value);
+                setIsOpen(false);
+              }}
+            >
+              {opt.label}
+              {opt.value === value && <Check size={14} />}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const Settings: React.FC<SettingsProps> = ({ 
   onBack, 
   theme, 
   toggleTheme, 
   lang, 
-  setLang 
+  setLang,
+  ytApiKey,
+  setYtApiKey,
+  ytChannelLink,
+  setYtChannelLink
 }) => {
   const [startPage, setStartPage] = useState<'hub' | 'planner'>(() => {
     return (localStorage.getItem('yt_planner_start_page') as 'hub' | 'planner') || 'hub';
   });
   const [language, setLanguage] = useState<Language>(lang);
-  const [notifications, setNotifications] = useState(() => {
-    return localStorage.getItem('yt_planner_notifications') !== 'false';
-  });
+  const [emailNotif, setEmailNotif] = useState(() => localStorage.getItem('yt_planner_email_notif') === 'true');
+  const [browserNotif, setBrowserNotif] = useState(() => localStorage.getItem('yt_planner_browser_notif') !== 'false');
+  
+  const [tempApiKey, setTempApiKey] = useState(ytApiKey);
+  const [tempChannelLink, setTempChannelLink] = useState(ytChannelLink);
   const [showSavedMsg, setShowSavedMsg] = useState(false);
 
   const t = translations[lang].settings;
@@ -32,9 +94,13 @@ export const Settings: React.FC<SettingsProps> = ({
   const handleSave = () => {
     localStorage.setItem('yt_planner_start_page', startPage);
     localStorage.setItem('yt_planner_lang', language);
-    localStorage.setItem('yt_planner_notifications', String(notifications));
+    localStorage.setItem('yt_planner_email_notif', String(emailNotif));
+    localStorage.setItem('yt_planner_browser_notif', String(browserNotif));
     
-    setLang(language); // Apply language globally
+    setYtApiKey(tempApiKey);
+    setYtChannelLink(tempChannelLink);
+    setLang(language);
+    
     setShowSavedMsg(true);
     setTimeout(() => setShowSavedMsg(false), 2000);
   };
@@ -49,6 +115,7 @@ export const Settings: React.FC<SettingsProps> = ({
       </header>
 
       <div className="settings-content">
+        {/* VIEW SETTINGS */}
         <section className="settings-section">
           <h3><Layout size={18} /> {t.view}</h3>
           <div className="settings-item">
@@ -56,14 +123,15 @@ export const Settings: React.FC<SettingsProps> = ({
               <span className="item-label">{t.startPage}</span>
               <span className="item-desc">{t.startPageDesc}</span>
             </div>
-            <select 
-              value={startPage} 
-              onChange={(e) => setStartPage(e.target.value as any)}
-              className="settings-select"
-            >
-              <option value="hub">{t.hub}</option>
-              <option value="planner">{t.planner}</option>
-            </select>
+            <CustomSelect 
+              label={t.startPage}
+              value={startPage}
+              options={[
+                { label: t.hub, value: 'hub' },
+                { label: t.planner, value: 'planner' }
+              ]}
+              onChange={(val) => setStartPage(val as any)}
+            />
           </div>
 
           <div className="settings-item">
@@ -71,13 +139,49 @@ export const Settings: React.FC<SettingsProps> = ({
               <span className="item-label">{t.appearance}</span>
               <span className="item-desc">{t.themeDesc}</span>
             </div>
-            <button className="btn btn-secondary" onClick={toggleTheme}>
+            <button className="btn btn-secondary theme-toggle-btn" onClick={toggleTheme}>
               {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+              <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
             </button>
           </div>
         </section>
 
+        {/* YOUTUBE SETTINGS */}
+        <section className="settings-section">
+          <h3><Youtube size={18} /> {t.youtube}</h3>
+          <div className="settings-item vertical">
+            <div className="item-info">
+              <span className="item-label">{t.youtubeLink}</span>
+            </div>
+            <div className="settings-input-wrapper">
+              <Youtube size={16} className="input-icon" />
+              <input 
+                type="text" 
+                placeholder="https://youtube.com/@handle" 
+                value={tempChannelLink}
+                onChange={(e) => setTempChannelLink(e.target.value)}
+                className="settings-input"
+              />
+            </div>
+          </div>
+          <div className="settings-item vertical">
+            <div className="item-info">
+              <span className="item-label">{t.youtubeApiKey}</span>
+            </div>
+            <div className="settings-input-wrapper">
+              <Key size={16} className="input-icon" />
+              <input 
+                type="password" 
+                placeholder="AIzaSy..." 
+                value={tempApiKey}
+                onChange={(e) => setTempApiKey(e.target.value)}
+                className="settings-input"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* LANGUAGE SETTINGS */}
         <section className="settings-section">
           <h3><Globe size={18} /> {t.language}</h3>
           <div className="settings-item">
@@ -102,28 +206,46 @@ export const Settings: React.FC<SettingsProps> = ({
           </div>
         </section>
 
+        {/* NOTIFICATION SETTINGS */}
         <section className="settings-section">
           <h3><Bell size={18} /> {t.notifications}</h3>
           <div className="settings-item">
             <div className="item-info">
-              <span className="item-label">{t.notifications}</span>
-              <span className="item-desc">{t.notifDesc}</span>
+              <Mail size={16} />
+              <span className="item-label">{t.notifEmail}</span>
             </div>
             <label className="switch">
               <input 
                 type="checkbox" 
-                checked={notifications} 
-                onChange={(e) => setNotifications(e.target.checked)}
+                checked={emailNotif} 
+                onChange={(e) => setEmailNotif(e.target.checked)}
               />
               <span className="slider round"></span>
             </label>
           </div>
+          <div className="settings-item">
+            <div className="item-info">
+              <Smartphone size={16} />
+              <span className="item-label">{t.notifBrowser}</span>
+            </div>
+            <label className="switch">
+              <input 
+                type="checkbox" 
+                checked={browserNotif} 
+                onChange={(e) => setBrowserNotif(e.target.checked)}
+              />
+              <span className="slider round"></span>
+            </label>
+          </div>
+          <button className="btn btn-secondary btn-full" onClick={() => alert('Test Benachrichtigung gesendet!')}>
+            <Bell size={16} /> {t.notifTest}
+          </button>
         </section>
       </div>
 
       <footer className="settings-footer">
         {showSavedMsg && <span className="save-message">{t.saved}</span>}
-        <button className="btn btn-primary" onClick={handleSave}>
+        <button className="btn btn-primary save-btn" onClick={handleSave}>
           <Save size={18} /> {t.save}
         </button>
       </footer>

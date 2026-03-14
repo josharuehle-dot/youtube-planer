@@ -40,6 +40,13 @@ export const translations = {
       languageDesc: "Stelle die Systemsprache ein.",
       notifications: "Benachrichtigungen",
       notifDesc: "Erhalte Benachrichtigungen für anstehende Uploads.",
+      notifEmail: "E-Mail Benachrichtigungen",
+      notifBrowser: "Browser-Push",
+      notifTest: "Test senden",
+      youtube: "YouTube Kanal",
+      youtubeLink: "Kanal-URL oder @Handle",
+      youtubeApiKey: "YouTube API Key",
+      betaPassword: "Beta Passwort",
       save: "Speichern",
       saved: "Einstellungen gespeichert!",
       hub: "Team Hub",
@@ -70,6 +77,17 @@ export const translations = {
     },
     videoList: {
       empty: "Keine ungeplanten Ideen."
+    },
+    auth: {
+      title: "Beta Zugang",
+      subtitle: "Bitte gib das Beta-Passwort ein, um den Planer zu öffnen.",
+      passwordLabel: "Beta Passwort",
+      passwordPlaceholder: "Beta-Passwort",
+      unlock: "Entsperren",
+      loading: "Prüfe...",
+      errorInvalid: "Ungültiges Passwort",
+      errorDB: "Verbindungsfehler zur Datenbank",
+      footer: "Nur für autorisierte Teammitglieder."
     }
   },
   en: {
@@ -111,6 +129,13 @@ export const translations = {
       languageDesc: "Set the system language.",
       notifications: "Notifications",
       notifDesc: "Receive notifications for upcoming uploads.",
+      notifEmail: "Email Notifications",
+      notifBrowser: "Browser Push",
+      notifTest: "Send Test",
+      youtube: "YouTube Channel",
+      youtubeLink: "Channel URL or @Handle",
+      youtubeApiKey: "YouTube API Key",
+      betaPassword: "Beta Passwort",
       save: "Save",
       saved: "Settings saved!",
       hub: "Team Hub",
@@ -141,6 +166,17 @@ export const translations = {
     },
     videoList: {
       empty: "No unscheduled ideas."
+    },
+    auth: {
+      title: "Beta Access",
+      subtitle: "Please enter the Beta password to open the planner.",
+      passwordLabel: "Beta Password",
+      passwordPlaceholder: "Beta-Password",
+      unlock: "Unlock",
+      loading: "Checking...",
+      errorInvalid: "Invalid password",
+      errorDB: "Database connection error",
+      footer: "Authorized team members only."
     }
   }
 };

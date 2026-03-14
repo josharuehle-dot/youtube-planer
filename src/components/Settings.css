@@ -37,7 +37,7 @@
   font-size: 1.1rem;
   color: var(--primary-color);
   margin-bottom: 20px;
-  opacity: 0.9;
+  font-weight: 600;
 }
 
 .settings-item {
@@ -56,6 +56,12 @@
   background: rgba(0, 0, 0, 0.02);
 }
 
+.settings-item.vertical {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
 .settings-item:hover {
   background: rgba(255, 255, 255, 0.05);
   border-color: var(--primary-color);
@@ -63,8 +69,13 @@
 
 .item-info {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.settings-item.vertical .item-info {
+  width: 100%;
 }
 
 .item-label {
@@ -77,31 +88,144 @@
   color: var(--text-muted);
 }
 
-.settings-select {
-  padding: 8px 12px;
-  border-radius: 8px;
+/* Custom Select Styles */
+.custom-select-container {
+  position: relative;
+  width: 200px;
+}
+
+.custom-select-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  color: var(--text-color);
-  font-family: inherit;
+  border-radius: 10px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.custom-select-trigger:hover {
+  border-color: var(--primary-color);
+  background: rgba(var(--primary-color-rgb), 0.05);
+}
+
+.chevron {
+  transition: transform 0.3s ease;
+}
+
+.chevron.open {
+  transform: rotate(180deg);
+}
+
+.custom-select-options {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  z-index: 100;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  animation: slideInDown 0.2s ease;
+}
+
+@keyframes slideInDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.custom-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.custom-option:hover {
+  background: rgba(var(--primary-color-rgb), 0.1);
+  color: var(--primary-color);
+}
+
+.custom-option.selected {
+  color: var(--primary-color);
+  font-weight: 600;
+  background: rgba(var(--primary-color-rgb), 0.05);
+}
+
+/* Input Styles */
+.settings-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.settings-input-wrapper .input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+.settings-input {
+  width: 100%;
+  padding: 12px 16px 12px 42px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+[data-theme="light"] .settings-input {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.settings-input:focus {
   outline: none;
+  border-color: var(--primary-color);
+  background: rgba(var(--primary-color-rgb), 0.05);
+  box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+}
+
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+}
+
+.btn-full {
+  width: 100%;
+  justify-content: center;
+  margin-top: 8px;
+  padding: 12px;
 }
 
 .settings-toggle-group {
   display: flex;
   background: var(--border-color);
   padding: 4px;
-  border-radius: 8px;
+  border-radius: 10px;
   gap: 4px;
 }
 
 .toggle-btn {
-  padding: 6px 16px;
+  padding: 8px 16px;
   border: none;
   background: transparent;
   color: var(--text-muted);
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.2s ease;
@@ -109,7 +233,8 @@
 
 .toggle-btn.active {
   background: var(--card-bg);
-  color: var(--text-color);
+  color: var(--primary-color);
+  font-weight: 600;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -129,11 +254,16 @@
   animation: fadeIn 0.3s ease;
 }
 
+.save-btn {
+  padding: 12px 28px;
+  font-weight: 600;
+}
+
 /* Switch Styles */
 .switch {
   position: relative;
   display: inline-block;
-  width: 50px;
+  width: 46px;
   height: 24px;
 }
 
@@ -170,7 +300,7 @@ input:checked + .slider {
 }
 
 input:checked + .slider:before {
-  transform: translateX(26px);
+  transform: translateX(22px);
 }
 
 .slider.round {
@@ -204,7 +334,7 @@ input:checked + .slider:before {
     gap: 16px;
   }
   
-  .settings-select, .settings-toggle-group {
+  .custom-select-container, .settings-toggle-group, .theme-toggle-btn {
     width: 100%;
   }
 }
