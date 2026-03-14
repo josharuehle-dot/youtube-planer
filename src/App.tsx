@@ -54,7 +54,7 @@ export default function App() {
   });
 
   const [ytApiKey] = useState<string>(() => localStorage.getItem('yt_planner_api_key') || '');
-  const [ytChannelLink, setYtChannelLink] = useState<string>(() => localStorage.getItem('yt_planner_channel_link') || '');
+  const [ytChannelLink, setYtChannelLink] = useState<string>(() => localStorage.getItem('yt_planner_channel_link') || 'https://www.youtube.com/@UEFN-TippsundTricks');
 
   useEffect(() => {
     sessionStorage.setItem('current_view', view);
