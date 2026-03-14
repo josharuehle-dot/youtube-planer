@@ -18,6 +18,10 @@ interface SettingsProps {
   setYtChannelLink: (val: string) => void;
   twitchLink: string;
   setTwitchLink: (val: string) => void;
+  twitchClientId: string;
+  setTwitchClientId: (val: string) => void;
+  twitchClientSecret: string;
+  setTwitchClientSecret: (val: string) => void;
   customLogo: string | null;
   setCustomLogo: (val: string | null) => void;
 }
@@ -83,6 +87,10 @@ export const Settings: React.FC<SettingsProps> = ({
   setYtChannelLink,
   twitchLink,
   setTwitchLink,
+  twitchClientId,
+  setTwitchClientId,
+  twitchClientSecret,
+  setTwitchClientSecret,
   customLogo,
   setCustomLogo
 }) => {
@@ -96,6 +104,8 @@ export const Settings: React.FC<SettingsProps> = ({
   const [tempApiKey, setTempApiKey] = useState(ytApiKey);
   const [tempChannelLink, setTempChannelLink] = useState(ytChannelLink);
   const [tempTwitchLink, setTempTwitchLink] = useState(twitchLink);
+  const [tempTwitchClientId, setTempTwitchClientId] = useState(twitchClientId);
+  const [tempTwitchClientSecret, setTempTwitchClientSecret] = useState(twitchClientSecret);
   const [showSavedMsg, setShowSavedMsg] = useState(false);
 
   const t = translations[lang].settings;
@@ -106,10 +116,14 @@ export const Settings: React.FC<SettingsProps> = ({
     localStorage.setItem('yt_planner_email_notif', String(emailNotif));
     localStorage.setItem('yt_planner_browser_notif', String(browserNotif));
     localStorage.setItem('yt_planner_twitch_link', tempTwitchLink);
+    localStorage.setItem('yt_planner_twitch_client_id', tempTwitchClientId);
+    localStorage.setItem('yt_planner_twitch_client_secret', tempTwitchClientSecret);
     
     setYtApiKey(tempApiKey);
     setYtChannelLink(tempChannelLink);
     setTwitchLink(tempTwitchLink);
+    setTwitchClientId(tempTwitchClientId);
+    setTwitchClientSecret(tempTwitchClientSecret);
     setLang(language);
     
     setShowSavedMsg(true);
@@ -221,6 +235,36 @@ export const Settings: React.FC<SettingsProps> = ({
                 placeholder="https://twitch.tv/username" 
                 value={tempTwitchLink}
                 onChange={(e) => setTempTwitchLink(e.target.value)}
+                className="settings-input"
+              />
+            </div>
+          </div>
+          <div className="settings-item vertical">
+            <div className="item-info">
+              <span className="item-label">{t.twitchClientId}</span>
+            </div>
+            <div className="settings-input-wrapper">
+              <Key size={16} className="input-icon" />
+              <input 
+                type="text" 
+                placeholder="Client ID" 
+                value={tempTwitchClientId}
+                onChange={(e) => setTempTwitchClientId(e.target.value)}
+                className="settings-input"
+              />
+            </div>
+          </div>
+          <div className="settings-item vertical">
+            <div className="item-info">
+              <span className="item-label">{t.twitchClientSecret}</span>
+            </div>
+            <div className="settings-input-wrapper">
+              <Key size={16} className="input-icon" />
+              <input 
+                type="password" 
+                placeholder="Client Secret" 
+                value={tempTwitchClientSecret}
+                onChange={(e) => setTempTwitchClientSecret(e.target.value)}
                 className="settings-input"
               />
             </div>

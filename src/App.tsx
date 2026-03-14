@@ -8,6 +8,7 @@ import { VideoModal } from './components/VideoModal';
 import { supabase } from './supabaseClient';
 import { fetchYouTubeStats } from './youtubeService';
 import type { ChannelStats } from './youtubeService';
+import { fetchTwitchStatus, type TwitchStreamInfo } from './twitchService';
 import { Auth } from './components/Auth';
 import { TeamPanel } from './components/TeamPanel';
 import { TeamManagement } from './components/TeamManagement';
@@ -56,6 +57,9 @@ export default function App() {
   const [ytApiKey, setYtApiKey] = useState<string>(() => localStorage.getItem('yt_planner_api_key') || '');
   const [ytChannelLink, setYtChannelLink] = useState<string>(() => localStorage.getItem('yt_planner_channel_link') || 'https://www.youtube.com/@UEFN-TippsundTricks');
   const [twitchLink, setTwitchLink] = useState<string>(() => localStorage.getItem('yt_planner_twitch_link') || '');
+  const [twitchClientId, setTwitchClientId] = useState<string>(() => localStorage.getItem('yt_planner_twitch_client_id') || '');
+  const [twitchClientSecret, setTwitchClientSecret] = useState<string>(() => localStorage.getItem('yt_planner_twitch_client_secret') || '');
+  const [twitchStatus, setTwitchStatus] = useState<TwitchStreamInfo | null>(null);
   const [customLogo, setCustomLogo] = useState<string | null>(() => localStorage.getItem('yt_planner_custom_logo'));
 
   useEffect(() => {
@@ -65,7 +69,35 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('yt_planner_api_key', ytApiKey);
     localStorage.setItem('yt_planner_channel_link', ytChannelLink);
-  }, [ytApiKey, ytChannelLink]);
+    localStorage.setItem('yt_planner_twitch_link', twitchLink);
+    localStorage.setItem('yt_planner_twitch_client_id', twitchClientId);
+    localStorage.setItem('yt_planner_twitch_client_secret', twitchClientSecret);
+
+    const updateStats = async () => {
+      // Fetch YouTube stats
+      if (ytChannelLink) {
+        const data = await fetchYouTubeStats(ytApiKey || null, ytChannelLink);
+        setStats(data);
+      } else {
+        setStats(null);
+      }
+
+      // Fetch Twitch status
+      if (twitchLink && twitchClientId && twitchClientSecret) {
+        const info = await fetchTwitchStatus(twitchClientId, twitchClientSecret, twitchLink);
+        setTwitchStatus(info);
+      } else {
+        setTwitchStatus(null);
+      }
+    };
+    
+    updateStats();
+    
+    // Poll Twitch status every 2 minutes
+    const interval = setInterval(updateStats, 120000); // Poll every 2 minutes for both YouTube and Twitch
+    
+    return () => clearInterval(interval);
+  }, [ytApiKey, ytChannelLink, twitchLink, twitchClientId, twitchClientSecret]);
 
   useEffect(() => {
     if (customLogo) {
@@ -235,6 +267,10 @@ export default function App() {
         setYtChannelLink={setYtChannelLink}
         twitchLink={twitchLink}
         setTwitchLink={setTwitchLink}
+        twitchClientId={twitchClientId}
+        setTwitchClientId={setTwitchClientId}
+        twitchClientSecret={twitchClientSecret}
+        setTwitchClientSecret={setTwitchClientSecret}
         customLogo={customLogo}
         setCustomLogo={setCustomLogo}
       />
@@ -254,7 +290,7 @@ export default function App() {
             />
           </div>
           <span className="logo-text">YT Planner</span>
-          <span className="badge-beta">BETA 4.7</span>
+          <span className="badge-beta">BETA 4.8</span>
           <button className="mobile-close btn-icon" onClick={() => setIsSidebarOpen(false)}>
             <CloseIcon size={18} />
           </button>
@@ -335,13 +371,20 @@ export default function App() {
                       <span className="stat-label">Twitch</span>
                     </div>
                   </a>
-                  <div className="stat-card twitch-theme">
-                    <Activity size={14} className="stat-icon live-pulse" />
-                    <div className="stat-info">
-                      <span className="stat-value" style={{ color: '#eb0400' }}>LIVE</span>
-                      <span className="stat-label">Status</span>
-                    </div>
+                <div className="stat-card twitch-theme">
+                  <Activity size={14} className={`stat-icon ${twitchStatus?.isLive ? 'live-pulse' : ''}`} />
+                  <div className="stat-info">
+                    <span 
+                      className="stat-value" 
+                      style={{ color: twitchStatus?.isLive ? '#eb0400' : 'var(--text-muted)' }}
+                    >
+                      {!twitchLink ? '---' : 
+                       !twitchClientId || !twitchClientSecret ? t.sidebar.twitchChecking :
+                       twitchStatus?.isLive ? t.sidebar.twitchLive : t.sidebar.twitchOffline}
+                    </span>
+                    <span className="stat-label">{t.sidebar.twitchStatus}</span>
                   </div>
+                </div>
                 </div>
               </div>
             )}

@@ -15,7 +15,11 @@ export const translations = {
       searchPlaceholder: "Videos suchen...",
       contentCalendar: "Content Kalender",
       schedule: "Planen",
-      twitch: "Twitch Insights"
+      twitch: "Twitch Insights",
+      twitchStatus: "Status",
+      twitchLive: "LIVE",
+      twitchOffline: "OFFLINE",
+      twitchChecking: "Checking..."
     },
     teamPanel: {
       welcome: "Willkommen zurück, Team! 👋",
@@ -49,6 +53,8 @@ export const translations = {
       youtubeApiKey: "YouTube API Key (Optional)",
       twitch: "Twitch Kanal",
       twitchLink: "Twitch Kanal-URL",
+      twitchClientId: "Twitch Client ID",
+      twitchClientSecret: "Twitch Client Secret",
       branding: "Branding",
       uploadLogo: "Logo hochladen",
       removeLogo: "Logo entfernen",
@@ -137,7 +143,11 @@ export const translations = {
       searchPlaceholder: "Search videos...",
       contentCalendar: "Content Calendar",
       schedule: "Schedule",
-      twitch: "Twitch Insights"
+      twitch: "Twitch Insights",
+      twitchStatus: "Status",
+      twitchLive: "LIVE",
+      twitchOffline: "OFFLINE",
+      twitchChecking: "Checking..."
     },
     teamPanel: {
       welcome: "Welcome back, team! 👋",
@@ -171,6 +181,8 @@ export const translations = {
       youtubeApiKey: "YouTube API Key (Optional)",
       twitch: "Twitch Channel",
       twitchLink: "Twitch Channel URL",
+      twitchClientId: "Twitch Client ID",
+      twitchClientSecret: "Twitch Client Secret",
       branding: "Branding",
       uploadLogo: "Upload Logo",
       removeLogo: "Remove Logo",
