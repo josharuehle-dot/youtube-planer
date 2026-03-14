@@ -102,11 +102,14 @@ export const translations = {
       subtitle: "Bitte gib das Beta-Passwort ein, um den Planer zu öffnen.",
       passwordLabel: "Beta Passwort",
       passwordPlaceholder: "Beta-Passwort",
-      unlock: "Entsperren",
+      unlock: "Freischalten",
       loading: "Prüfe...",
       errorInvalid: "Ungültiges Passwort",
-      errorDB: "Verbindungsfehler zur Datenbank",
-      footer: "Nur für autorisierte Teammitglieder."
+      errorDB: "Datenbankfehler. Bitte später erneut versuchen.",
+      unlocking: "Entsperren...",
+      discordLogin: "Mit Discord anmelden",
+      orOR: "ODER",
+      footer: "Bereitgestellt von Supabase & React"
     },
     teamManagement: {
       title: "Team Verwaltung",
@@ -240,8 +243,11 @@ export const translations = {
       unlock: "Unlock",
       loading: "Checking...",
       errorInvalid: "Invalid password",
-      errorDB: "Database connection error",
-      footer: "Authorized team members only."
+      errorDB: "Database error. Please try again later.",
+      unlocking: "Unlocking...",
+      discordLogin: "Login with Discord",
+      orOR: "OR",
+      footer: "Powered by Supabase & React"
     },
     teamManagement: {
       title: "Team Management",

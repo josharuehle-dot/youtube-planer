@@ -149,6 +149,19 @@ button {
   transform: translateY(-1px);
 }
 
+.btn-discord {
+  background: #5865F2;
+  color: white;
+  box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
+  width: 100%;
+}
+
+.btn-discord:hover {
+  background: #4752C4;
+  box-shadow: 0 6px 20px rgba(88, 101, 242, 0.5);
+  transform: translateY(-1px);
+}
+
 .btn-secondary {
   background: var(--surface-hover);
   border: 1px solid var(--surface-border);

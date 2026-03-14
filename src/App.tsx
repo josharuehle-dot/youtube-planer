@@ -70,6 +70,28 @@ export default function App() {
 
   useEffect(() => {
     sessionStorage.setItem('current_view', view);
+    
+    // Check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setIsUnlocked(true);
+        if (view === 'login') setView('hub');
+      }
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        setIsUnlocked(true);
+        if (view === 'login') setView('hub');
+      } else if (event === 'SIGNED_OUT') {
+        setIsUnlocked(false);
+        setView('login');
+        sessionStorage.removeItem('team_unlocked');
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [view]);
 
   useEffect(() => {
