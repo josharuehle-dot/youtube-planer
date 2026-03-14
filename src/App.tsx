@@ -11,6 +11,7 @@ import type { ChannelStats } from './youtubeService';
 import { Auth } from './components/Auth';
 import { TeamPanel } from './components/TeamPanel';
 import { TeamManagement } from './components/TeamManagement';
+import { Settings } from './components/Settings';
 import logo from './assets/logo.png';
 import './App.css';
 
@@ -44,9 +45,11 @@ export default function App() {
   const [isUnlocked, setIsUnlocked] = useState<boolean>(() => {
     return sessionStorage.getItem('team_unlocked') === 'true';
   });
-  const [view, setView] = useState<'login' | 'hub' | 'planner' | 'team_management'>(() => {
+  const [view, setView] = useState<'login' | 'hub' | 'planner' | 'team_management' | 'settings'>(() => {
     if (sessionStorage.getItem('team_unlocked') !== 'true') return 'login';
-    return (sessionStorage.getItem('current_view') as any) || 'hub';
+    const startPage = localStorage.getItem('yt_planner_start_page') as any;
+    const savedView = sessionStorage.getItem('current_view') as any;
+    return savedView || startPage || 'hub';
   });
 
   useEffect(() => {
@@ -180,6 +183,12 @@ export default function App() {
     );
   }
 
+  if (view === 'settings') {
+    return (
+      <Settings onBack={() => setView('hub')} theme={theme} toggleTheme={toggleTheme} />
+    );
+  }
+
   return (
     <div className={`app-container ${isSidebarOpen ? 'sidebar-open' : ''}`}>
       {/* Sidebar */}
@@ -189,7 +198,7 @@ export default function App() {
             <img src={logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <span className="logo-text">YT Planner</span>
-          <span className="badge-beta">BETA 2.6</span>
+          <span className="badge-beta">BETA 3.4</span>
           <button className="mobile-close btn-icon" onClick={() => setIsSidebarOpen(false)}>
             <CloseIcon size={18} />
           </button>
@@ -202,6 +211,13 @@ export default function App() {
             onClick={() => setView('hub')}
           >
             <Layout size={16} /> Team Hub
+          </button>
+          <button 
+            className="btn btn-secondary" 
+            style={{ width: '100%', gap: '12px', marginTop: '8px' }}
+            onClick={() => setView('settings')}
+          >
+            <Layout size={16} /> Einstellungen
           </button>
         </div>
 
