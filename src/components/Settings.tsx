@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   ArrowLeft, Save, Bell, Layout, Globe, Moon, Sun, 
-  Youtube, Key, Mail, Smartphone, ChevronDown, Check
+  Youtube, Mail, Smartphone, ChevronDown, Check
 } from 'lucide-react';
 import { translations, type Language } from '../translations';
 import './Settings.css';
@@ -12,8 +12,6 @@ interface SettingsProps {
   toggleTheme: () => void;
   lang: Language;
   setLang: (lang: Language) => void;
-  ytApiKey: string;
-  setYtApiKey: (val: string) => void;
   ytChannelLink: string;
   setYtChannelLink: (val: string) => void;
 }
@@ -73,8 +71,6 @@ export const Settings: React.FC<SettingsProps> = ({
   toggleTheme, 
   lang, 
   setLang,
-  ytApiKey,
-  setYtApiKey,
   ytChannelLink,
   setYtChannelLink
 }) => {
@@ -85,7 +81,6 @@ export const Settings: React.FC<SettingsProps> = ({
   const [emailNotif, setEmailNotif] = useState(() => localStorage.getItem('yt_planner_email_notif') === 'true');
   const [browserNotif, setBrowserNotif] = useState(() => localStorage.getItem('yt_planner_browser_notif') !== 'false');
   
-  const [tempApiKey, setTempApiKey] = useState(ytApiKey);
   const [tempChannelLink, setTempChannelLink] = useState(ytChannelLink);
   const [showSavedMsg, setShowSavedMsg] = useState(false);
 
@@ -97,7 +92,6 @@ export const Settings: React.FC<SettingsProps> = ({
     localStorage.setItem('yt_planner_email_notif', String(emailNotif));
     localStorage.setItem('yt_planner_browser_notif', String(browserNotif));
     
-    setYtApiKey(tempApiKey);
     setYtChannelLink(tempChannelLink);
     setLang(language);
     
@@ -160,21 +154,6 @@ export const Settings: React.FC<SettingsProps> = ({
                 placeholder="https://youtube.com/@handle" 
                 value={tempChannelLink}
                 onChange={(e) => setTempChannelLink(e.target.value)}
-                className="settings-input"
-              />
-            </div>
-          </div>
-          <div className="settings-item vertical">
-            <div className="item-info">
-              <span className="item-label">{t.youtubeApiKey}</span>
-            </div>
-            <div className="settings-input-wrapper">
-              <Key size={16} className="input-icon" />
-              <input 
-                type="password" 
-                placeholder="AIzaSy..." 
-                value={tempApiKey}
-                onChange={(e) => setTempApiKey(e.target.value)}
                 className="settings-input"
               />
             </div>

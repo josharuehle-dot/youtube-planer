@@ -56,15 +56,18 @@ async function getChannelIdFromHandle(handle: string, apiKey: string): Promise<s
   }
 }
 
-export async function fetchYouTubeStats(apiKey: string, channelLinkOrId: string): Promise<ChannelStats | null> {
-  if (!apiKey || !channelLinkOrId) return null;
+const FALLBACK_API_KEY = 'AIzaSyBAhcpMxsKagDFgaD_VviSvKKc-7B5KpSs';
+
+export async function fetchYouTubeStats(apiKey: string | null, channelLinkOrId: string): Promise<ChannelStats | null> {
+  const activeKey = apiKey || FALLBACK_API_KEY;
+  if (!channelLinkOrId) return null;
 
   try {
     let resolvedId = channelLinkOrId;
     const info = extractChannelInfo(channelLinkOrId);
 
     if (info?.type === 'handle') {
-      const id = await getChannelIdFromHandle(info.value, apiKey);
+      const id = await getChannelIdFromHandle(info.value, activeKey);
       if (!id) return null;
       resolvedId = id;
     } else if (info?.type === 'id') {
@@ -72,7 +75,7 @@ export async function fetchYouTubeStats(apiKey: string, channelLinkOrId: string)
     }
 
     const response = await fetch(
-      `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&id=${resolvedId}&key=${apiKey}`
+      `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&id=${resolvedId}&key=${activeKey}`
     );
     const data = await response.json();
 

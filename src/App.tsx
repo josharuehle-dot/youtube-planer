@@ -53,7 +53,7 @@ export default function App() {
     return savedView || startPage || 'hub';
   });
 
-  const [ytApiKey, setYtApiKey] = useState<string>(() => localStorage.getItem('yt_planner_api_key') || '');
+  const [ytApiKey] = useState<string>(() => localStorage.getItem('yt_planner_api_key') || '');
   const [ytChannelLink, setYtChannelLink] = useState<string>(() => localStorage.getItem('yt_planner_channel_link') || '');
 
   useEffect(() => {
@@ -61,9 +61,8 @@ export default function App() {
   }, [view]);
 
   useEffect(() => {
-    localStorage.setItem('yt_planner_api_key', ytApiKey);
     localStorage.setItem('yt_planner_channel_link', ytChannelLink);
-  }, [ytApiKey, ytChannelLink]);
+  }, [ytChannelLink]);
 
   useEffect(() => {
     if (isUnlocked && view === 'login') {
@@ -85,8 +84,8 @@ export default function App() {
     fetchVideos();
 
     async function getStats() {
-      if (!ytApiKey || !ytChannelLink) return;
-      const data = await fetchYouTubeStats(ytApiKey, ytChannelLink);
+      if (!ytChannelLink) return;
+      const data = await fetchYouTubeStats(ytApiKey || null, ytChannelLink);
       setStats(data);
     }
     getStats();
@@ -208,8 +207,6 @@ export default function App() {
         toggleTheme={toggleTheme} 
         lang={lang}
         setLang={setLang}
-        ytApiKey={ytApiKey}
-        setYtApiKey={setYtApiKey}
         ytChannelLink={ytChannelLink}
         setYtChannelLink={setYtChannelLink}
       />
