@@ -1,0 +1,8 @@
+.git
+node_modules
+dist
+brain
+/tmp
+*.md
+Dockerfile
+.vercelignore
