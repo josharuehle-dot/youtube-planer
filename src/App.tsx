@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Plus, Search, Sun, Moon, Menu, X as CloseIcon, Users, Eye, Video as VideoIcon, Layout, Globe, Activity } from 'lucide-react';
+import { Plus, Search, Sun, Moon, Menu, X as CloseIcon, Layout } from 'lucide-react';
 import type { Video, VideoStatus } from './types';
 import { STATUS_COLORS } from './types';
 import { Calendar } from './components/Calendar';
@@ -204,6 +204,13 @@ export default function App() {
     closeModal();
   }, []);
 
+  const handleLogout = useCallback(() => {
+    sessionStorage.removeItem('team_unlocked');
+    sessionStorage.removeItem('current_view');
+    setIsUnlocked(false);
+    setView('login');
+  }, []);
+
   const handleDelete = useCallback(async (id: string) => {
     const { error } = await supabase.from('videos').delete().eq('id', id);
     if (error) {
@@ -231,14 +238,11 @@ export default function App() {
         onEnterPlanner={() => setView('planner')} 
         onEnterTeamManagement={() => setView('team_management')}
         onEnterSettings={() => setView('settings')}
-        onLogout={() => {
-          sessionStorage.removeItem('team_unlocked');
-          sessionStorage.removeItem('current_view');
-          setIsUnlocked(false);
-          setView('login');
-        }}
+        onLogout={handleLogout}
         lang={lang}
         customLogo={customLogo}
+        stats={stats}
+        twitchStatus={twitchStatus}
       />
     );
   }
@@ -290,7 +294,7 @@ export default function App() {
             />
           </div>
           <span className="logo-text">YT Planner</span>
-          <span className="badge-beta">BETA 4.8</span>
+          <span className="badge-beta">BETA 4.9</span>
           <button className="mobile-close btn-icon" onClick={() => setIsSidebarOpen(false)}>
             <CloseIcon size={18} />
           </button>
@@ -307,89 +311,6 @@ export default function App() {
         </div>
 
         <div className="sidebar-content">
-          {/* Stats Section */}
-          <div className="sidebar-section">
-            <h3 className="section-title">{t.sidebar.insights}</h3>
-            <div className="stats-grid">
-              <a 
-                href={ytChannelLink || "https://www.youtube.com"} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="stat-card link-card"
-              >
-                {stats?.avatarUrl ? (
-                  <img src={stats.avatarUrl} alt="Avatar" className="stat-icon channel-avatar" style={{ borderRadius: '50%' }} />
-                ) : (
-                  <Layout size={14} className="stat-icon" />
-                )}
-                <div className="stat-info">
-                  <span className="stat-value" style={{ fontSize: '0.9rem' }}>{stats?.channelName || "Channel"}</span>
-                  <span className="stat-label">YouTube</span>
-                </div>
-              </a>
-              <div className="stat-card">
-                <Users size={14} className="stat-icon" />
-                <div className="stat-info">
-                  <span className="stat-value">{stats ? Number(stats.subscriberCount).toLocaleString() : '---'}</span>
-                  <span className="stat-label">{t.sidebar.subs}</span>
-                </div>
-              </div>
-              <div className="stat-card">
-                <Eye size={14} className="stat-icon" />
-                <div className="stat-info">
-                  <span className="stat-value">{stats ? Number(stats.viewCount).toLocaleString() : '---'}</span>
-                  <span className="stat-label">{t.sidebar.views}</span>
-                </div>
-              </div>
-              <div className="stat-card">
-                <VideoIcon size={14} className="stat-icon" />
-                <div className="stat-info">
-                  <span className="stat-value">{stats ? stats.videoCount : '---'}</span>
-                  <span className="stat-label">{t.sidebar.videos}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Twitch Section */}
-            {twitchLink && (
-              <div className="sidebar-section" style={{ animation: 'fadeIn 0.5s ease-out' }}>
-                <h3 className="section-title">{t.sidebar.twitch}</h3>
-                <div className="stats-grid">
-                  <a 
-                    href={twitchLink} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="stat-card link-card twitch-theme"
-                  >
-                    <div className="stat-icon twitch-avatar">
-                      <Globe size={14} />
-                    </div>
-                    <div className="stat-info">
-                      <span className="stat-value" style={{ fontSize: '0.9rem' }}>
-                        {twitchLink.split('/').pop() || "Channel"}
-                      </span>
-                      <span className="stat-label">Twitch</span>
-                    </div>
-                  </a>
-                <div className="stat-card twitch-theme">
-                  <Activity size={14} className={`stat-icon ${twitchStatus?.isLive ? 'live-pulse' : ''}`} />
-                  <div className="stat-info">
-                    <span 
-                      className="stat-value" 
-                      style={{ color: twitchStatus?.isLive ? '#eb0400' : 'var(--text-muted)' }}
-                    >
-                      {!twitchLink ? '---' : 
-                       !twitchClientId || !twitchClientSecret ? t.sidebar.twitchChecking :
-                       twitchStatus?.isLive ? t.sidebar.twitchLive : t.sidebar.twitchOffline}
-                    </span>
-                    <span className="stat-label">{t.sidebar.twitchStatus}</span>
-                  </div>
-                </div>
-                </div>
-              </div>
-            )}
-          </div>
-
           <button
             className="btn btn-primary"
             style={{ width: '100%', marginBottom: '24px' }}

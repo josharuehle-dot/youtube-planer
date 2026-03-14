@@ -1,7 +1,9 @@
 import React from 'react';
-import { Layout, LogOut, ArrowRight, Settings, Users } from 'lucide-react';
+import { Layout, LogOut, ArrowRight, Settings, Users, Video, Globe } from 'lucide-react';
 import { translations, type Language } from '../translations';
 import logo from '../assets/logo.png';
+import type { ChannelStats } from '../youtubeService';
+import type { TwitchStreamInfo } from '../twitchService';
 import './TeamPanel.css';
 
 interface TeamPanelProps {
@@ -11,6 +13,8 @@ interface TeamPanelProps {
   onLogout: () => void;
   lang: Language;
   customLogo: string | null;
+  stats: ChannelStats | null;
+  twitchStatus: TwitchStreamInfo | null;
 }
 
 export const TeamPanel: React.FC<TeamPanelProps> = ({ 
@@ -19,7 +23,9 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({
   onEnterSettings,
   onLogout,
   lang,
-  customLogo
+  customLogo,
+  stats,
+  twitchStatus
 }) => {
   const t = translations[lang].teamPanel;
 
@@ -35,7 +41,7 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({
             />
           </div>
           <span className="logo-text">Team Panel</span>
-          <span className="badge-beta">BETA 4.8</span>
+          <span className="badge-beta">BETA 4.9</span>
         </div>
         <button className="btn-logout" onClick={onLogout}>
           <LogOut size={18} />
@@ -47,6 +53,64 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({
         <div className="welcome-section">
           <h1>{t.welcome}</h1>
           <p>{t.subtitle}</p>
+        </div>
+
+        {/* Stats Section in Hub */}
+        <div className="hub-stats-row">
+          <div className="hub-stat-group yt-group">
+            <div className="hub-stat-card glass">
+              <div className="hub-stat-header">
+                {stats?.avatarUrl ? (
+                  <img src={stats.avatarUrl} alt="YT Avatar" className="hub-channel-avatar" />
+                ) : (
+                  <div className="hub-stat-icon yt-icon"><Video size={20} /></div>
+                )}
+                <div className="hub-stat-title">
+                  <span className="hub-val">{stats?.channelName || "---"}</span>
+                  <span className="hub-lab">YouTube</span>
+                </div>
+              </div>
+              <div className="hub-stat-metrics">
+                <div className="hub-metric">
+                  <span className="met-val">{stats ? Number(stats.subscriberCount).toLocaleString() : '---'}</span>
+                  <span className="met-lab">Subs</span>
+                </div>
+                <div className="hub-metric">
+                  <span className="met-val">{stats ? Number(stats.viewCount).toLocaleString() : '---'}</span>
+                  <span className="met-lab">Views</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="hub-stat-group twitch-group">
+            <div className="hub-stat-card glass twitch-border">
+              <div className="hub-stat-header">
+                <div className="hub-stat-icon twitch-icon"><Globe size={20} /></div>
+                <div className="hub-stat-title">
+                  <span className="hub-val">Twitch</span>
+                  <span className="hub-lab">Live Status</span>
+                </div>
+              </div>
+              <div className="hub-stat-metrics">
+                <div className="hub-metric">
+                  <span 
+                    className={`met-val ${twitchStatus?.isLive ? 'live-text' : ''}`}
+                    style={{ color: twitchStatus?.isLive ? '#eb0400' : 'var(--text-muted)' }}
+                  >
+                    {twitchStatus?.isLive ? 'LIVE' : 'OFFLINE'}
+                  </span>
+                  <span className="met-lab">Status</span>
+                </div>
+                {twitchStatus?.isLive && (
+                  <div className="hub-metric">
+                    <span className="met-val">{twitchStatus.viewerCount}</span>
+                    <span className="met-lab">Viewers</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="modules-grid">

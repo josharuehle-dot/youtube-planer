@@ -198,7 +198,7 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({ onBack, lang, cu
             />
           </div>
           <span className="logo-text">Team Panel</span>
-          <span className="badge-beta">BETA 4.8</span>
+          <span className="badge-beta">BETA 4.9</span>
         </div>
         <button className="btn-back" onClick={onBack}>
           <ArrowLeft size={18} />
