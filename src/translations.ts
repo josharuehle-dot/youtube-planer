@@ -91,6 +91,33 @@ export const translations = {
       errorInvalid: "Ungültiges Passwort",
       errorDB: "Verbindungsfehler zur Datenbank",
       footer: "Nur für autorisierte Teammitglieder."
+    },
+    teamManagement: {
+      title: "Team Verwaltung",
+      subtitle: "Verwalte deine Teammitglieder, Rollen und Berechtigungen an einem Ort.",
+      searchPlaceholder: "Mitglieder suchen...",
+      addMember: "Mitglied einladen",
+      cancel: "Abbrechen",
+      name: "Name",
+      email: "E-Mail",
+      role: "Rolle",
+      status: "Status",
+      add: "Hinzufügen",
+      member: "Mitglied",
+      active: "Aktiv",
+      invited: "Eingeladen",
+      remove: "Entfernen",
+      removeConfirm: "Möchtest du dieses Mitglied wirklich entfernen?",
+      empty: "Keine Mitglieder gefunden.",
+      overview: "Berechtigungs-Übersicht",
+      limits: "Einladungs-Limits",
+      occupied: "von 10 Plätzen belegt",
+      back: "Zurück zum Hub",
+      activityLog: "Letzte Aktivitäten",
+      stats: "Mitglieder-Statistiken",
+      admin: "Admin",
+      moderator: "Moderator",
+      editor: "Editor"
     }
   },
   en: {
@@ -183,6 +210,33 @@ export const translations = {
       errorInvalid: "Invalid password",
       errorDB: "Database connection error",
       footer: "Authorized team members only."
+    },
+    teamManagement: {
+      title: "Team Management",
+      subtitle: "Manage your team members, roles and permissions in one place.",
+      searchPlaceholder: "Search members...",
+      addMember: "Invite Member",
+      cancel: "Cancel",
+      name: "Name",
+      email: "Email",
+      role: "Role",
+      status: "Status",
+      add: "Add",
+      member: "Member",
+      active: "Active",
+      invited: "Invited",
+      remove: "Remove",
+      removeConfirm: "Are you sure you want to remove this member?",
+      empty: "No members found.",
+      overview: "Permissions Overview",
+      limits: "Invitation Limits",
+      occupied: "of 10 seats occupied",
+      back: "Back to Hub",
+      activityLog: "Recent Activity",
+      stats: "Member Stats",
+      admin: "Admin",
+      moderator: "Moderator",
+      editor: "Editor"
     }
   }
 };

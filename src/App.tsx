@@ -212,7 +212,11 @@ export default function App() {
 
   if (view === 'team_management') {
     return (
-      <TeamManagement onBack={() => setView('hub')} />
+      <TeamManagement 
+        onBack={() => setView('hub')} 
+        lang={lang}
+        customLogo={customLogo}
+      />
     );
   }
 
@@ -247,7 +251,7 @@ export default function App() {
             />
           </div>
           <span className="logo-text">YT Planner</span>
-          <span className="badge-beta">BETA 3.4</span>
+          <span className="badge-beta">BETA 4.6</span>
           <button className="mobile-close btn-icon" onClick={() => setIsSidebarOpen(false)}>
             <CloseIcon size={18} />
           </button>

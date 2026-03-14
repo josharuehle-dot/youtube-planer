@@ -35,7 +35,7 @@ export const TeamPanel: React.FC<TeamPanelProps> = ({
             />
           </div>
           <span className="logo-text">Team Panel</span>
-          <span className="badge-beta">BETA 3.4</span>
+          <span className="badge-beta">BETA 4.6</span>
         </div>
         <button className="btn-logout" onClick={onLogout}>
           <LogOut size={18} />
