@@ -83,13 +83,6 @@ export default function App() {
     }
     fetchVideos();
 
-    async function getStats() {
-      if (!ytChannelLink) return;
-      const data = await fetchYouTubeStats(ytApiKey || null, ytChannelLink);
-      setStats(data);
-    }
-    getStats();
-
     // Set up real-time subscription
     const channel = supabase
       .channel('videos_changes')
@@ -107,7 +100,20 @@ export default function App() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [isUnlocked]);
+
+  useEffect(() => {
+    if (!isUnlocked) return;
+    async function getStats() {
+      if (!ytChannelLink) {
+        setStats(null);
+        return;
+      }
+      const data = await fetchYouTubeStats(ytApiKey || null, ytChannelLink);
+      setStats(data);
+    }
+    getStats();
+  }, [isUnlocked, ytChannelLink, ytApiKey]);
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [modalState, setModalState] = useState<ModalState>({ mode: 'closed' });
